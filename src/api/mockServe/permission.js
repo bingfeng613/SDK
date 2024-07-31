@@ -12,44 +12,44 @@ export default {
                         {
                             path: '/home',
                             name: 'home',
-                            label: '首页',
+                            label: '上传解析',
                             icon: 's-home',
                             url: 'Home.vue'
                         },
                         {
                             path: '/mall',
                             name: 'mall',
-                            label: '商品管理',
+                            label: '已解析库',
                             icon: 'video-play',
                             url: 'Mall.vue'
                         },
                         {
                             path: '/user',
                             name: 'user',
-                            label: '用户管理',
+                            label: '统计数据',
                             icon: 'user',
                             url: 'User.vue'
                         },
-                        {
-                            label: '其他',
-                            icon: 'location',
-                            children: [
-                                {
-                                    path: '/page1',
-                                    name: 'page1',
-                                    label: '页面1',
-                                    icon: 'setting',
-                                    url: 'PageOne.vue'
-                                },
-                                {
-                                    path: '/page2',
-                                    name: 'page2',
-                                    label: '页面2',
-                                    icon: 'setting',
-                                    url: 'PageTwo.vue'
-                                }
-                            ]
-                        }
+                        // {
+                        //     label: '其他',
+                        //     icon: 'location',
+                        //     children: [
+                        //         {
+                        //             path: '/page1',
+                        //             name: 'page1',
+                        //             label: '页面1',
+                        //             icon: 'setting',
+                        //             url: 'PageOne.vue'
+                        //         },
+                        //         {
+                        //             path: '/page2',
+                        //             name: 'page2',
+                        //             label: '页面2',
+                        //             icon: 'setting',
+                        //             url: 'PageTwo.vue'
+                        //         }
+                        //     ]
+                        // }
                     ],
                     token: Mock.Random.guid(),
                     message: '获取成功'

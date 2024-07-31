@@ -2,10 +2,9 @@
     <div class="header-container">
         <div class="l-content">
             <el-button @click="handleMenu" icon="el-icon-menu" size="mini"></el-button>
-            <!-- 面包屑 -->
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item v-for="item in tags" :key="item.path" :to="{ path: item.path }">{{ item.label }}
-                </el-breadcrumb-item>
+                <el-breadcrumb-item v-for="item in tags" :key="item.path" :to="{ path: item.path }">{{ item.label
+                    }}</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="r-content">
@@ -25,16 +24,16 @@
 <script>
 import { mapState } from 'vuex'
 import Cookie from 'js-cookie'
+
 export default {
     methods: {
         handleMenu() {
-            // 相当于调用这个方法
-            this.$store.commit('CollapseMenu')
+            this.$store.commit('CollapseMenu');
         },
         handleClick(command) {
             if (command === 'logout') {
-                Cookie.remove('token')
-                this.$router.push('/login')
+                Cookie.remove('token');
+                this.$router.push('/login');
             }
         }
     },
@@ -48,15 +47,13 @@ export default {
 
 <style lang="less" scoped>
 .header-container {
-    background-color: #333;
+    background-color: #fff;
     height: 60px;
-
-    // 让按钮和头像居中
     display: flex;
     justify-content: space-between;
     align-items: center;
-    // 不要紧贴边框
     padding: 0 20px;
+    border-bottom: 1px solid #eaeaea;
 
     .el-dropdown-link {
         cursor: pointer;
@@ -65,7 +62,6 @@ export default {
         .user {
             width: 40px;
             height: 40px;
-            // 50%变圆形
             border-radius: 50%;
         }
     }
@@ -73,13 +69,11 @@ export default {
 
 .l-content {
     display: flex;
-    // 上下居中
     align-items: center;
 
     .el-breadcrumb {
         margin-left: 15px;
 
-        // deep 强制生效
         /deep/.el-breadcrumb__item {
             .el-breadcrumb__inner {
                 &.is-link {
@@ -89,7 +83,7 @@ export default {
 
             &:last-child {
                 .el-breadcrumb__inner {
-                    color: #fff;
+                    color: #333;
                 }
             }
         }

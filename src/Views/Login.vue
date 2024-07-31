@@ -1,20 +1,35 @@
 <template>
-    <el-form ref="form" class="login_container" :model="login" status-icon :rules="rules" label-width="70px">
-        <!-- h3要放在里面:只能有一个根,且title也是表单的一部分 -->
-        <h3 class="login_title">用户登录</h3>
-        <!-- prop对应rules里的键 -->
-        <el-form-item label="用户名" prop="username">
-            <el-input v-model="login.username" autocomplete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="密码" prop="password">
-            <el-input type="password" v-model="login.password" autocomplete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item>
-            <el-button @click="submit" type="primary" style="margin-left:30px;margin-top:10px">提交</el-button>
-        </el-form-item>
-    </el-form>
+    <div class="login_page">
+        <div class="background_overlay"></div>
+        <div class="content">
+            <div class="text_section">
+                <h1>P-Sticker: SDK隐私声明合规检测平台</h1>
+                <p>一键生成SDK不合规数据声明报告, 上传隐私政策, 找出缺失/模糊声明及无效链接</p>
+            </div>
+            <div class="login_container">
+                <h3 class="login_title">登录</h3>
+                <el-form ref="form" :model="login" status-icon :rules="rules" label-width="0px">
+                    <el-form-item prop="username">
+                        <el-input v-model="login.username" placeholder="请输入您的账号" prefix-icon="el-icon-user"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="password">
+                        <el-input type="password" v-model="login.password" placeholder="请输入您的密码"
+                            prefix-icon="el-icon-lock"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button @click="submit" type="primary" class="login_button">登录</el-button>
+                    </el-form-item>
+                </el-form>
+                <div class="register_link">
+                    <a href="#">注册</a>
+                    <a href="#">忘记密码?</a>
+                </div>
+            </div>
+            <div class="footer">
+                © 2024 Zhong Zhu Shi Gong Dui. All rights reserved.
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -30,8 +45,8 @@ export default {
             },
             // 校验规则
             rules: {
-                username: [{ required: 'true', message: '请输入用户名', trigger: 'blur' }],
-                password: [{ required: 'true', message: '请输入用户名', trigger: 'blur' }]
+                username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+                password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
             }
         }
     },
@@ -43,16 +58,16 @@ export default {
                     // 传入表单数据
                     getMenu(this.login).then((data) => {
                         // console.log(data);
-                        if(data.data.code===20000){
+                        if (data.data.code === 20000) {
                             // 记录cookie
-                            Cookie.set('token',data.data.data.token)
+                            Cookie.set('token', data.data.data.token)
                             // 设置菜单
-                            this.$store.commit('setMenu',data.data.data.menu)
+                            this.$store.commit('setMenu', data.data.data.menu)
                             // 动态添加路由
-                            this.$store.commit('addMenu',this.$router)
+                            this.$store.commit('addMenu', this.$router)
                             // 跳转到首页
                             this.$router.push('/home')
-                        }else{
+                        } else {
                             // 验证失败的弹窗
                             this.$message.error(data.data.data.message);
                         }
@@ -65,31 +80,84 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.login_page {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100vh;
+    background: url('images/signinbackground.jpg') no-repeat center center;
+    background-size: cover;
+    position: relative;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    padding: 50px;
+    box-sizing: border-box;
+}
+
+.text_section {
+    text-align: left;
+    color: #333;
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+}
+
 .login_container {
     width: 350px;
-    border: 1px solid #eaeaea;
-
-    // 居中
-    margin: 180px auto;
-
-    padding: 35px 35px 15px 35px;
-
-    // 让padding在width里面
-    box-sizing: border-box;
-
-    border-radius: 15px;
-    background-color: #fff;
-    box-shadow: 0 0 25px #cac6c6;
+    padding: 30px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 
     .login_title {
-        color: #505458;
-        // 左右居中
+        font-size: 24px;
+        font-weight: 500;
         text-align: center;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
+        color: #333;
     }
 
-    .el-input {
-        width: 198px;
+    .el-form-item {
+        margin-bottom: 20px;
     }
+
+    .login_button {
+        width: 100%;
+        height: 40px;
+    }
+
+    .register_link {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+
+        a {
+            color: #409EFF;
+            text-decoration: none;
+        }
+    }
+}
+
+.footer {
+    text-align: left;
+    color: #333;
+    font-size: 12px;
 }
 </style>

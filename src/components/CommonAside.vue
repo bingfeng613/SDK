@@ -1,12 +1,15 @@
 <template>
     <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
-        :collapse="isCollapse" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-        <!-- 要放到导航栏里面 -->
-        <h3>{{ isCollapse ? "后台" : "通用后台管理系统" }}</h3>
-        <!-- 观察数据,我们发现name是唯一标识 -->
-        <!-- 查看文档,index是唯一标识 -->
+        :collapse="isCollapse" background-color="#ffffff" text-color="#333333" active-text-color="#409EFF">
+        <div class="user">
+            <img src="../Views/images/avatar.png" alt="">
+            <div class="userInfo">
+                <p class="name">审计员A</p>
+                <p class="access">auditorA</p>
+                <a href="#" class="change-password">修改密码</a>
+            </div>
+        </div>
         <el-menu-item @click="clickItem(item)" v-for="item in noChildren" :key="item.name" :index="item.name">
-            <!-- 这里是字体图标,用模板字符串拼接,注意要动态绑定 -->
             <i :class="`el-icon-${item.icon}`"></i>
             <span slot="title">{{ item.label }}</span>
         </el-menu-item>
@@ -23,22 +26,45 @@
 </template>
 
 <style lang="less" scoped>
-.el-menu-vertical-demo:not(.el-menu--collapse) {
+.el-menu-vertical-demo {
     width: 200px;
-    min-height: 400px;
+    min-height: 100vh;
+    border-right: none;
 }
 
-.el-menu {
-    height: 100vh;
-    // Aside和Header之间没有边框缝隙
-    border-right: none;
+.user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #ccc;
+    background-color: #f5f5f5;
 
-    h3 {
+    img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+    }
+
+    .userInfo {
         text-align: center;
-        line-height: 48px;
-        color: #fff;
-        font-size: 16px;
-        font-weight: 400;
+
+        .name {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .access {
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .change-password {
+            color: #409EFF;
+            font-size: 14px;
+            text-decoration: none;
+        }
     }
 }
 </style>
@@ -47,9 +73,7 @@
 import cookie from 'js-cookie'
 export default {
     data() {
-        return {
-
-        };
+        return {};
     },
     methods: {
         handleOpen(key, keyPath) {
@@ -59,29 +83,24 @@ export default {
             console.log(key, keyPath);
         },
         clickItem(item) {
-            // 防止自己跳自己的报错
             if (this.$route.path !== item.path && !(this.$route.path === '/home' && (item.path === '/'))) {
-                this.$router.push(item.path)
+                this.$router.push(item.path);
             }
-            // 面包屑
-            this.$store.commit('SelectMenu', item)
+            this.$store.commit('SelectMenu', item);
         }
     },
     computed: {
         noChildren() {
-            // 如果没有children则返回true,会被过滤器留下
-            return this.MenuData.filter(item => !item.children)
+            return this.MenuData.filter(item => !item.children);
         },
         hasChildren() {
-            return this.MenuData.filter(item => item.children)
+            return this.MenuData.filter(item => item.children);
         },
-        // 要放到计算属性,自动计算
         isCollapse() {
-            return this.$store.state.tab.isCollapse
+            return this.$store.state.tab.isCollapse;
         },
-        // 获取菜单
         MenuData() {
-            return JSON.parse(cookie.get('menu')) || this.$store.state.tab.menu
+            return JSON.parse(cookie.get('menu')) || this.$store.state.tab.menu;
         }
     }
 }
