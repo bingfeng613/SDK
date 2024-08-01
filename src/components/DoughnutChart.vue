@@ -1,6 +1,11 @@
 <template>
-    <div>
+    <div class="doughnut-chart-container">
         <doughnut :data="data" :options="options" />
+        <div class="chart-label">
+            {{ effectivePercentage }}%
+            <div>有效</div>
+        </div>
+
     </div>
 </template>
 
@@ -25,16 +30,45 @@ export default {
         return {
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                let label = tooltipItem.label || ''
+                                if (label) {
+                                    label += ': '
+                                }
+                                label += Math.round(tooltipItem.raw * 100) / 100
+                                return label
+                            }
+                        }
+                    }
+                }
             }
+        }
+    },
+    computed: {
+        effectivePercentage() {
+            const total = this.data.datasets[0].data.reduce((acc, val) => acc + val, 0)
+            const effective = this.data.datasets[0].data[0] // assuming the first index is the effective count
+            return ((effective / total) * 100).toFixed(2)
         }
     }
 }
 </script>
 
 <style scoped>
-canvas {
-    width: 20% ;
-    height: 20% ;
+.doughnut-chart-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-label {
+    position: absolute;
+    font-size: 1.5em;
+    color: #000;
 }
 </style>

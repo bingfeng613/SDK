@@ -29,6 +29,7 @@
 
 <script>
 import { export_json_to_excel } from './Export2Excel';
+import { mapActions } from 'vuex';
 
 export default {
   data() {
@@ -79,6 +80,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['updateStats']),
     handleCheckAllChange(val) {
       this.$refs.table.toggleAllSelection();
     },
@@ -86,10 +88,10 @@ export default {
       this.selectedItems = val;
     },
     deleteSelected() {
-      // Implement delete functionality
+      // 删除功能的实现
     },
     downloadOriginal() {
-      // Implement download functionality
+      // 下载功能的实现
     },
     exportData() {
       if (this.selectedItems.length === 0) {
@@ -108,7 +110,49 @@ export default {
       export_json_to_excel(['APP名称', '缺失声明数', '缺失声明项', '模糊声明项', '模糊声明项数', '无效链接数', '无效链接项'], data, '导出数据');
     },
     generateStats() {
-      // Implement stats generation functionality
+      if (this.selectedItems.length === 0) {
+        this.$message.warning('请先选择要生成统计的数据');
+        return;
+      }
+
+      // 统计选中数据的各种信息
+      const linkCounts = { 有效: 0, 无法访问: 0, 非隐私政策: 0, APP隐私政策: 0, SDK隐私政策: 0 };
+      const complianceCounts = { 合规: 0, 缺失声明: 0, 模糊声明: 0 };
+
+      this.selectedItems.forEach(item => {
+        // 示例统计逻辑，根据实际数据需要调整
+        linkCounts['有效'] += item.invalidLinks === 0 ? 1 : 0;
+        linkCounts['无法访问'] += item.invalidLinks > 0 ? 1 : 0;
+        linkCounts['非隐私政策'] += item.invalidLinkItems.includes('非隐私政策') ? 1 : 0;
+        linkCounts['APP隐私政策'] += item.invalidLinkItems.includes('APP隐私政策') ? 1 : 0;
+        linkCounts['SDK隐私政策'] += item.invalidLinkItems.includes('SDK隐私政策') ? 1 : 0;
+
+        complianceCounts['合规'] += item.missingStatements === 0 ? 1 : 0;
+        complianceCounts['缺失声明'] += item.missingStatements > 0 ? 1 : 0;
+        complianceCounts['模糊声明'] += item.redundantStatements > 0 ? 1 : 0;
+      });
+
+      const linkData = {
+        labels: ['有效', '无法访问', '非隐私政策', 'APP隐私政策', 'SDK隐私政策'],
+        datasets: [{
+          data: Object.values(linkCounts),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+        }]
+      };
+
+      const complianceData = {
+        labels: ['合规', '缺失声明', '模糊声明'],
+        datasets: [{
+          data: Object.values(complianceCounts),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+        }]
+      };
+
+      // 更新统计信息
+      this.updateStats({ linkData, complianceData });
+
+      // 跳转到 User 页面
+      this.$router.push({ name: 'user' });
     },
     handlePageChange(page) {
       this.currentPage = page;
