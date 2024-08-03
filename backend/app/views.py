@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from xlsxwriter import Workbook
 
 from .models import App
-from .serializers import AppSerializer, UserLoginSerializer, PasswordChangeSerializer, UserRegistrationSerializer
+from .serializers import AppSerializer, UserRegistrationSerializer, PasswordChangeSerializer, UserLoginSerializer
 
 
 class CustomPageNumberPagination(pagination.PageNumberPagination):
@@ -24,20 +24,14 @@ class CustomPageNumberPagination(pagination.PageNumberPagination):
     max_page_size = 20
 
 # 账号
-class LoginView(APIView):
+class UserLoginView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
             user_info = serializer.validated_data
-            user = user_info.get('user')
-            if user:
-                return Response({
-                    'message': 'Login successful',
-                    'user': {
-                        'id': user.id,
-                        'account': user.account,
-                    }
-                }, status=status.HTTP_200_OK)
+            return Response({
+                'account': user_info,
+            }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PasswordChangeView(APIView):
