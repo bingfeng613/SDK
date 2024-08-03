@@ -257,32 +257,44 @@ class StatisticsView(APIView):
             return Response({'error': 'One or more ids are not found'}, status=status.HTTP_404_NOT_FOUND)
 
         total_app_num = len(ids)
+        total_declare_group_num = sum(item.totalDataNum for item in data_records)
+        total_declare_url_num = sum(item.totalUrlNum for item in data_records)
+
         total_lack_data_num = sum(item.lackDataNum for item in data_records)
         total_fuzzy_data_num = sum(item.fuzzyDataNum for item in data_records)
+        total_compliance_group_num = total_declare_group_num-total_lack_data_num-total_fuzzy_data_num
+
+        total_unableToConnect_num = sum(item.UnableToConnectNum for item in data_records)
+        total_notPrivacyPolicy_num = sum(item.NotPrivacyPolicyNum for item in data_records)
+        total_appPrivacyPolicy_num = sum(item.appPrivacyPolicyNum for item in data_records)
+        total_notDataInsidePrivacyPolicy_num = sum(item.notDataInsidePrivacyPolicyNum for item in data_records)
+        total_compliance_url_num = total_declare_url_num-total_unableToConnect_num-total_notPrivacyPolicy_num-total_appPrivacyPolicy_num-total_notDataInsidePrivacyPolicy_num
 
         print(total_lack_data_num, total_fuzzy_data_num, total_app_num)
 
+
         data = {
             "appNum": total_app_num,
-            "declareGroupNum": 618,
-            "declareUrlNum": 315,
-            "complianceGroupNum": 278, # 这个数据算一下
-            "complianceGroupProportion": "45%", # 这个数据算一下
-            "lackDataNum": total_lack_data_num,
-            "lackDataProportion": "30%", # 这个数据算一下
-            "fuzzyDataNum": total_fuzzy_data_num,
-            "fuzzyDataProportion": "25%", # 这个数据算一下
+            "declareGroupNum": total_declare_group_num,
+            "declareUrlNum": total_declare_url_num,
 
-            "complianceUrlNum": 95, # 没有这个数据
-            "complianceUrlProportion": "30%", # 没有这个数据
-            "UnableToConnectNum": 15,
-            "UnableToConnectProportion": "5%", # 没有这个数据
-            "NotPrivacyPolicyNum": 110,
-            "NotPrivacyPolicyProportion": "35%", # 没有这个数据
-            "appPrivacyPolicyNum": 47,
-            "appPrivacyPolicyProportion": "15%", # 没有这个数据
-            "notDataInsidePrivacyPolicyNum": 48,
-            "notDataInsidePrivacyPolicyProportion": "15%" # 没有这个数据
+            "complianceGroupNum": total_compliance_group_num,
+            "complianceGroupProportion": f"{round(total_compliance_group_num / total_declare_group_num* 100, 2)}%",
+            "lackDataNum": total_lack_data_num,
+            "lackDataProportion": f"{round(total_lack_data_num / total_declare_group_num* 100, 2)}%",
+            "fuzzyDataNum": total_fuzzy_data_num,
+            "fuzzyDataProportion": f"{round(total_fuzzy_data_num / total_declare_group_num* 100, 2)}%",
+
+            "complianceUrlNum": total_compliance_url_num,
+            "complianceUrlProportion": f"{round(total_compliance_url_num / total_declare_url_num* 100, 2)}%",
+            "UnableToConnectNum": total_unableToConnect_num,
+            "UnableToConnectProportion": f"{round(total_unableToConnect_num / total_declare_url_num* 100, 2)}%",
+            "NotPrivacyPolicyNum": total_notPrivacyPolicy_num,
+            "NotPrivacyPolicyProportion": f"{round(total_notPrivacyPolicy_num / total_declare_url_num* 100, 2)}%",
+            "appPrivacyPolicyNum": total_appPrivacyPolicy_num,
+            "appPrivacyPolicyProportion": f"{round(total_appPrivacyPolicy_num / total_declare_url_num* 100, 2)}%",
+            "notDataInsidePrivacyPolicyNum": total_notDataInsidePrivacyPolicy_num,
+            "notDataInsidePrivacyPolicyProportion": f"{round(total_notDataInsidePrivacyPolicy_num / total_declare_url_num* 100, 2)}%",
         }
         return Response(data, status=status.HTTP_200_OK)
 
