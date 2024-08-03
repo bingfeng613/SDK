@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# AUTH_USER_MODEL = 'app.User'
 
 # Application definition
 
@@ -38,7 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'app',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -86,10 +88,15 @@ CACHES = {
     }
 }
 
-# REST_FRAMEWORK = {
+REST_FRAMEWORK = {
 #     'EXCEPTION_HANDLER': 'sdkVisualPC.app.utils.custom_exception_handler',
-# }
-
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+}
 ROOT_URLCONF = "sdkVisualPC.urls"
 
 TEMPLATES = [

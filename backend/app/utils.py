@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import check_password
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
@@ -13,3 +14,4 @@ def custom_exception_handler(exc, ctx):
         }
         return Response(data)
     # return Response({'data':'test'})
+
