@@ -161,8 +161,6 @@ export default {
           this.$message.error('下载过程中出现错误，请重试');
           console.error('Error downloading items:', error);
         });
-
-
     },
     // 导出数据
     exportData() {
