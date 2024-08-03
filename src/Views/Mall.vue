@@ -161,8 +161,6 @@ export default {
           this.$message.error('下载过程中出现错误，请重试');
           console.error('Error downloading items:', error);
         });
-
-
     },
     // 导出数据
     exportData() {
@@ -182,46 +180,33 @@ export default {
       }));
       export_json_to_excel(['APP名称', '缺失声明数', '缺失声明项', '模糊声明项', '模糊声明项数', '无效链接数', '无效链接项', '隐私政策原文链接'], data, '导出数据');
     },
-    generateStats() {
+    // 生成统计数据
+    async generateStats() {
       if (this.selectedItems.length === 0) {
         this.$message.warning('请先选择要生成统计的数据');
         return;
       }
-
-      const linkCounts = { 有效: 0, 无法访问: 0, 非隐私政策: 0, APP隐私政策: 0, SDK隐私政策: 0 };
-      const complianceCounts = { 合规: 0, 缺失声明: 0, 模糊声明: 0 };
-
-      this.selectedItems.forEach(item => {
-        linkCounts['有效'] += item.brokenLinkNum === 0 ? 1 : 0;
-        linkCounts['无法访问'] += item.brokenLinkNum > 0 ? 1 : 0;
-        linkCounts['非隐私政策'] += item.brokenLink.includes('非隐私政策') ? 1 : 0;
-        linkCounts['APP隐私政策'] += item.brokenLink.includes('APP隐私政策') ? 1 : 0;
-        linkCounts['SDK隐私政策'] += item.brokenLink.includes('SDK隐私政策') ? 1 : 0;
-
-        complianceCounts['合规'] += item.lackDataNum === 0 ? 1 : 0;
-        complianceCounts['缺失声明'] += item.lackDataNum > 0 ? 1 : 0;
-        complianceCounts['模糊声明'] += item.fuzzyDataNum > 0 ? 1 : 0;
-      });
-
-      const linkData = {
-        labels: ['有效', '无法访问', '非隐私政策', 'APP隐私政策', 'SDK隐私政策'],
-        datasets: [{
-          data: Object.values(linkCounts),
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-        }]
-      };
-
-      const complianceData = {
-        labels: ['合规', '缺失声明', '模糊声明'],
-        datasets: [{
-          data: Object.values(complianceCounts),
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-        }]
-      };
-
-      this.updateStats({ linkData, complianceData });
-      this.$router.push({ name: 'user' });
+      // 调用成功 再进行跳转
+      const selectedIds = this.selectedItems.map(item => item.id);
+      // console.log(selectedIds)
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/statistics/?ids=${JSON.stringify(selectedIds)}`);
+        // console.log(response)
+        if (!response.ok) {
+          this.$message.warning('出现问题 请重试');
+          return;
+        }
+        const data = await response.json();
+        this.$store.commit('setStatistics', data);
+        // console.log(data)
+        // 调用成功 再进行跳转
+        this.$router.push({ name: 'user' });
+      } catch (error) {
+        console.error('Failed to fetch statistics:', error);
+      }
     },
+
+    // 换页
     handlePageChange(page) {
       this.currentPage = page;
       if (this.search) {
@@ -229,7 +214,7 @@ export default {
       } else {
         this.fetchData();
       }
-    }
+    },
   },
   mounted() {
     this.fetchData();
