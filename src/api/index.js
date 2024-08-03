@@ -27,3 +27,13 @@ export const updateUser = (data) => {
 export const getMenu = (data) => {
     return http.post('/permission/getMenu',data)
 }
+
+// 登录权限
+export const login = (data) => {
+    return http.post('http://127.0.0.1:8000/login/', data)
+}
+
+// 注册权限
+export const register = (data) => {
+    return http.post('http://127.0.0.1:8000/register/', data)
+}

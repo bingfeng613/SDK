@@ -30,26 +30,6 @@ export default {
                             icon: 'user',
                             url: 'User.vue'
                         },
-                        // {
-                        //     label: '其他',
-                        //     icon: 'location',
-                        //     children: [
-                        //         {
-                        //             path: '/page1',
-                        //             name: 'page1',
-                        //             label: '页面1',
-                        //             icon: 'setting',
-                        //             url: 'PageOne.vue'
-                        //         },
-                        //         {
-                        //             path: '/page2',
-                        //             name: 'page2',
-                        //             label: '页面2',
-                        //             icon: 'setting',
-                        //             url: 'PageTwo.vue'
-                        //         }
-                        //     ]
-                        // }
                     ],
                     token: Mock.Random.guid(),
                     message: '获取成功'

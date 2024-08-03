@@ -9,68 +9,167 @@
             <div class="login_container">
                 <h3 class="login_title">登录</h3>
                 <el-form ref="form" :model="login" status-icon :rules="rules" label-width="0px">
-                    <el-form-item prop="username">
-                        <el-input v-model="login.username" placeholder="请输入您的账号" prefix-icon="el-icon-user"></el-input>
+                    <el-form-item prop="account">
+                        <el-input v-model="login.account" placeholder="请输入您的账号" prefix-icon="el-icon-user"></el-input>
                     </el-form-item>
                     <el-form-item prop="password">
                         <el-input type="password" v-model="login.password" placeholder="请输入您的密码"
                             prefix-icon="el-icon-lock"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="submit" type="primary" class="login_button">登录</el-button>
+                        <el-button @click="submitLogin" type="primary" class="login_button">登录</el-button>
                     </el-form-item>
                 </el-form>
                 <div class="register_link">
-                    <a href="#">注册</a>
-                    <a href="#">忘记密码?</a>
+                    <a @click="openRegisterDialog">注册</a>
                 </div>
             </div>
             <div class="footer">
                 © 2024 Zhong Zhu Shi Gong Dui. All rights reserved.
             </div>
         </div>
+
+        <el-dialog title="注册" :visible.sync="registerDialogVisible">
+            <el-form ref="registerForm" :model="register" :rules="registerRules" label-width="80px">
+                <el-form-item label="账号" prop="account">
+                    <el-input v-model="register.account"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" prop="password">
+                    <el-input type="password" v-model="register.password"></el-input>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="confirmPassword">
+                    <el-input type="password" v-model="register.confirmPassword"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitRegister">确定</el-button>
+                    <el-button @click="registerDialogVisible = false">取消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import Cookie from 'js-cookie'
-import { getMenu } from '../api/index'
+import { login, register } from '../api/index'
+
+
 export default {
     data() {
         return {
-            // 登陆数据
             login: {
                 account: '',
                 password: ''
             },
-            // 校验规则
+            register: {
+                account: '',
+                password: '',
+                confirmPassword: ''
+            },
             rules: {
                 account: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
                 password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
-            }
+            },
+            registerRules: {
+                account: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+                password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+                confirmPassword: [{ required: true, message: '请确认密码', trigger: 'blur' }]
+            },
+            registerDialogVisible: false
         }
     },
     methods: {
-        submit() {
-            // 表单的校验
+        submitLogin() {
             this.$refs.form.validate((valid) => {
                 if (valid) {
-                    // 传入表单数据
-                    getMenu(this.login).then((data) => {
-                        // console.log(data);
-                        if (data.data.code === 20000) {
-                            // 记录cookie
-                            Cookie.set('token', data.data.data.token)
-                            // 设置菜单
-                            this.$store.commit('setMenu', data.data.data.menu)
-                            // 动态添加路由
-                            this.$store.commit('addMenu', this.$router)
-                            // 跳转到首页
+                    login(this.login).then(response => {
+                        const data = response;
+                        console.log(data)
+                        if (data.status === 200) {
+                            Cookie.set('token', data.data.account)
+                            this.$message.success('登录成功');
+                            this.setMenu(data.data.account)
+                            this.$store.commit('setAccount', data.data.account); // 保存账号信息到 Vuex
                             this.$router.push('/home')
                         } else {
-                            // 验证失败的弹窗
-                            this.$message.error(data.data.data.message);
+                            this.$message.error('登录失败，请重试');
                         }
+                    }).catch(error => {
+                        this.$message.error('登录失败，请重试',error);
+                    })
+                }
+            })
+        },
+        setMenu(account) {
+            let menu;
+            console.log("setMenu:",account)
+            if (account) {
+                menu = [
+                    {
+                        path: '/home',
+                        name: 'home',
+                        label: '上传解析',
+                        icon: 's-home',
+                        url: 'Home.vue'
+                    },
+                    {
+                        path: '/mall',
+                        name: 'mall',
+                        label: '已解析库',
+                        icon: 'video-play',
+                        url: 'Mall.vue'
+                    },
+                    {
+                        path: '/user',
+                        name: 'user',
+                        label: '统计数据',
+                        icon: 'user',
+                        url: 'User.vue'
+                    },
+                ];
+            } else {
+                menu = [
+                    // {
+                    //     path: '/home',
+                    //     name: 'home',
+                    //     label: '首页',
+                    //     icon: 's-home',
+                    //     url: 'Home.vue'
+                    // },
+                    // {
+                    //     path: '/video',
+                    //     name: 'video',
+                    //     label: '商品管理',
+                    //     icon: 'video-play',
+                    //     url: 'Mall.vue'
+                    // }
+                ];
+            }
+            this.$store.commit('setMenu', menu)
+            this.$store.commit('addMenu', this.$router)
+            console.log("menu:",menu)
+            console.log("this.$router:",this.$router)
+        },
+        openRegisterDialog() {
+            this.registerDialogVisible = true;
+        },
+        submitRegister() {
+            this.$refs.registerForm.validate((valid) => {
+                if (valid) {
+                    if (this.register.password !== this.register.confirmPassword) {
+                        this.$message.error('两次输入的密码不一致');
+                        return;
+                    }
+                    register(this.register).then(response => {
+                        const data = response.data;
+                        if (response.status === 201) {
+                            this.$message.success('注册成功，请登录');
+                            this.registerDialogVisible = false;
+                        } else {
+                            this.$message.error(data.message);
+                        }
+                    }).catch(error => {
+                        this.$message.error('注册失败，请重试', error);
                     })
                 }
             })

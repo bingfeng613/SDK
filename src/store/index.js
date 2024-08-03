@@ -28,9 +28,21 @@ const stats = {
   },
 };
 
+const user = {
+  state: {
+    account: {},
+  },
+  mutations: {
+    setAccount(state, account) {
+      state.account = account;
+    },
+  },
+};
+
 export default new Vuex.Store({
   modules: {
     tab,
     stats,
+    user
   },
 });
