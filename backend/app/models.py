@@ -20,3 +20,14 @@ class App(models.Model):
     fuzzyData = models.TextField()
     brokenLink = models.TextField()
     htmlUrl = models.TextField()
+
+class MyCosConfig(models.Model):
+    bucket_name = models.CharField(max_length=255, unique=True, verbose_name='存储桶名称')
+    region = models.CharField(max_length=255, verbose_name='腾讯云区域')
+    secret_id = models.CharField(max_length=255, verbose_name='腾讯云 SecretId')
+    secret_key = models.CharField(max_length=255, verbose_name='腾讯云 SecretKey')
+    def __str__(self):
+        return self.bucket_name
+    class Meta:
+        verbose_name = '腾讯云 COS 配置'
+        verbose_name_plural = '腾讯云 COS 配置'

@@ -16,30 +16,34 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Account not found.")
 
         if not check_password(data['password'],user.password):
-            # print(check_password('123456',make_password('123456')))
             raise serializers.ValidationError("Unable to log in with provided credentials.")
 
         return user.account
 
+
 class PasswordChangeSerializer(serializers.Serializer):
-    old_password = serializers.CharField(write_only=True)
-    new_password = serializers.CharField(write_only=True)
+    account = serializers.CharField()
+    old_password = serializers.CharField()
+    new_password = serializers.CharField()
 
     def validate(self, data):
-        old_password = data.get('old_password')
-        new_password = data.get('new_password')
-        user = self.context['request'].user
+        account = data.get('account', self.context['request'].data.get('account'))
 
-        if not user.check_password(old_password):
+        try:
+            user = User.objects.get(account=account)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Account not found.")
+
+        if not user.check_password(data.get('old_password')):
             raise serializers.ValidationError("Old password is incorrect.")
 
-        if len(new_password) < 8:
+        if len(data.get('new_password')) < 6:
             raise serializers.ValidationError("New password is too short.")
 
-        if new_password == old_password:
+        if data.get('new_password') == data.get('old_password'):
             raise serializers.ValidationError("New password should be different from the old one.")
 
-        return data
+        return {'account': account, 'new_password':data.get('new_password')}
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:

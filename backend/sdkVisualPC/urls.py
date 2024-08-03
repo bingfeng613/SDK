@@ -22,7 +22,6 @@ from app.views import AppListView, AppSearchView, AppDeleteView, AppExcelView, A
 
 urlpatterns = [
     # path("admin/", admin.site.urls),
-    # todo：账号写成django自带的 改成数据库里的
     path('login/', UserLoginView.as_view(), name='login'),
     path('change-password/', PasswordChangeView.as_view(), name='change-password'),
     path('register/', UserRegistrationView.as_view(), name='register'),

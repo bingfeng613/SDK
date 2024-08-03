@@ -13,8 +13,10 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from xlsxwriter import Workbook
+from qcloud_cos import CosConfig
+from qcloud_cos import CosS3Client
 
-from .models import App
+from .models import App, User, MyCosConfig
 from .serializers import AppSerializer, UserRegistrationSerializer, PasswordChangeSerializer, UserLoginSerializer
 
 
@@ -38,16 +40,14 @@ class PasswordChangeView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = PasswordChangeSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            user = request.user
-            new_password = serializer.validated_data['new_password']
-
-            user.set_password(new_password)
+            print(serializer.validated_data)
+            account = serializer.validated_data.get('account')
+            user = User.objects.get(account=account)
+            user.set_password(serializer.validated_data.get('new_password'))
             user.save()
-
-            update_session_auth_hash(request, user)
-
-            return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
-
+            return Response({
+                'message': '密码修改成功',
+            }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserRegistrationView(APIView):
@@ -64,7 +64,7 @@ class UserRegistrationView(APIView):
 # 上传文件
 # todo：接文本解析框架
 # todo：接文件上传腾讯云
-class AppUploadView(APIView): # 未接文本解析，上传后增加默认记录
+class AppUploadView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, *args, **kwargs):
@@ -72,7 +72,31 @@ class AppUploadView(APIView): # 未接文本解析，上传后增加默认记录
         if not files:
             return Response({'error': 'No files provided.'}, status=400)
 
+        cos_config = MyCosConfig.objects.first()
+        if not cos_config:
+            return Response({'error': 'CosConfig not found.'}, status=400)
+
+        # print(cos_config.region,cos_config.secret_id,cos_config.secret_key)
+        config = CosConfig(Region=cos_config.region, SecretId=cos_config.secret_id, SecretKey=cos_config.secret_key)
+        client = CosS3Client(config)
+
         for file in files:
+            response = client.put_object(
+                Bucket=cos_config.bucket_name,
+                Body=file,
+                Key=file.name,
+                StorageClass='STANDARD',
+                ACL='public-read',
+                CacheControl='max-age=3600'
+            )
+
+            # print(response)
+            # file_url = response.get('Location')
+            # print('note1')
+            # print(file_url)
+            # print('note2')
+            file_url = f"https://{cos_config.bucket_name}.cos.{cos_config.region}.myqcloud.com/{file.name}"
+
             app = App(
                 appName='test appName',
                 lackDataNum=0,
@@ -81,11 +105,13 @@ class AppUploadView(APIView): # 未接文本解析，上传后增加默认记录
                 lackData='test lackData',
                 fuzzyData='test fuzzyData',
                 brokenLink='test brokenLink',
-                htmlUrl='http://f0.0sm.com/node0/2024/08/866ACE1765AB52F8-d8dc519c7d5ac198.jpg' # 默认固定文件Url
+                htmlUrl=file_url
             )
             app.save()
 
         return Response({'message': f'{len(files)} files uploaded successfully.'}, status=201)
+
+
 
 # 已解析库
 class AppListView(generics.ListAPIView):
