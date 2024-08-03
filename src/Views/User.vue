@@ -12,71 +12,40 @@
     <div class="content">
       <div class="card summary">
         <h3>共导入：</h3>
-        <p>30篇APP隐私政策</p>
+        <p>{{ statistics.appNum }} 篇APP隐私政策</p>
         <p>共解析：</p>
-        <p>618个声明组</p>
-        <p>315个声明链接</p>
+        <p>{{ statistics.declareGroupNum }} 个声明组</p>
+        <p>{{ statistics.declareUrlNum }} 个声明链接</p>
       </div>
       <div class="charts">
         <div class="chart">
           <h3>链接有效性</h3>
-          <doughnut-chart :data="linkData"></doughnut-chart>
+          <doughnut-chart :data="linkData" center-label="有效"></doughnut-chart>
+
           <div class="details">
-            <div class="detail-item">
-              <span class="detail-label">链接无法访问：</span>
-              <span class="detail-value">15 / 5%</span>
+            <p>{{ statistics.complianceUrlNum }} 有效链接数</p>
+            <p>of {{ statistics.declareUrlNum }} 总链接数</p>
+            <div class="detail-item" v-for="(value, label) in linkDetails" :key="label">
+              <span class="detail-label">{{ label }}：</span>
+              <span class="detail-value">{{ value.count }} / {{ value.proportion }}</span>
               <div class="bar-bg">
-                <div class="bar" :style="{ width: '5%', backgroundColor: '#621da9' }"></div>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">链接非隐私政策：</span>
-              <span class="detail-value">110 / 35%</span>
-              <div class="bar-bg">
-                <div class="bar" :style="{ width: '35%', backgroundColor: '#a84bde' }"></div>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">链接为APP隐私政策：</span>
-              <span class="detail-value">47 / 15%</span>
-              <div class="bar-bg">
-                <div class="bar" :style="{ width: '15%', backgroundColor: '#e25788' }"></div>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">链接为无数据声明的SDK隐私政策：</span>
-              <span class="detail-value">48 / 15%</span>
-              <div class="bar-bg">
-                <div class="bar" :style="{ width: '15%', backgroundColor: '#ffb039' }"></div>
+                <div class="bar" :style="{ width: value.proportion, backgroundColor: value.color }"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="chart">
           <h3>数据合规性</h3>
-          <doughnut-chart :data="complianceData"></doughnut-chart>
+
+          <doughnut-chart :data="complianceData" center-label="合规"></doughnut-chart>
           <div class="details">
-            <p>278 总声明数</p>
-            <p>of 618 总声明数</p>
-            <div class="detail-item">
-              <span class="detail-label">合规：</span>
-              <span class="detail-value">45%</span>
+            <p>{{ statistics.complianceGroupNum }} 合规声明数</p>
+            <p>of {{ statistics.declareGroupNum }} 总声明数</p>
+            <div class="detail-item" v-for="(value, label) in complianceDetails" :key="label">
+              <span class="detail-label">{{ label }}：</span>
+              <span class="detail-value">{{ value.count }} / {{ value.proportion }}</span>
               <div class="bar-bg">
-                <div class="bar" :style="{ width: '45%', backgroundColor: '#FF6384' }"></div>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">缺失声明：</span>
-              <span class="detail-value">185 / 30%</span>
-              <div class="bar-bg">
-                <div class="bar" :style="{ width: '30%', backgroundColor: '#36A2EB' }"></div>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">模糊声明：</span>
-              <span class="detail-value">155 / 25%</span>
-              <div class="bar-bg">
-                <div class="bar" :style="{ width: '25%', backgroundColor: '#FFCE56' }"></div>
+                <div class="bar" :style="{ width: value.proportion, backgroundColor: value.color }"></div>
               </div>
             </div>
           </div>
@@ -87,54 +56,100 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import DoughnutChart from '@/components/DoughnutChart.vue'
+import { mapState } from 'vuex';
+import DoughnutChart from '@/components/DoughnutChart.vue';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
-
 
 export default {
   components: {
     DoughnutChart
   },
   computed: {
-    ...mapState(['linkData', 'complianceData']),
+    ...mapState({
+      statistics: state => state.stats.statistics,
+    }),
+    linkDetails() {
+      return {
+        '链接无法访问': {
+          count: this.statistics.UnableToConnectNum,
+          proportion: this.statistics.UnableToConnectProportion,
+          color: '#621da9'
+        },
+        '链接非隐私政策': {
+          count: this.statistics.NotPrivacyPolicyNum,
+          proportion: this.statistics.NotPrivacyPolicyProportion,
+          color: '#a84bde'
+        },
+        '链接为APP隐私政策': {
+          count: this.statistics.appPrivacyPolicyNum,
+          proportion: this.statistics.appPrivacyPolicyProportion,
+          color: '#e25788'
+        },
+        '链接为无数据声明的SDK隐私政策': {
+          count: this.statistics.notDataInsidePrivacyPolicyNum,
+          proportion: this.statistics.notDataInsidePrivacyPolicyProportion,
+          color: '#ffb039'
+        }
+      };
+    },
+    complianceDetails() {
+      return {
+        // '合规': {
+        //   count: this.statistics.complianceGroupNum,
+        //   proportion: this.statistics.complianceGroupProportion,
+        //   color: '#FF6384'
+        // },
+        '缺失声明': {
+          count: this.statistics.lackDataNum,
+          proportion: this.statistics.lackDataProportion,
+          color: '#36A2EB'
+        },
+        '模糊声明': {
+          count: this.statistics.fuzzyDataNum,
+          proportion: this.statistics.fuzzyDataProportion,
+          color: '#FFCE56'
+        }
+      };
+    },
+    linkData() {
+      return {
+        datasets: [{
+          data: [this.statistics.complianceUrlNum, this.statistics.UnableToConnectNum, this.statistics.NotPrivacyPolicyNum, this.statistics.appPrivacyPolicyNum, this.statistics.notDataInsidePrivacyPolicyNum],
+          backgroundColor: ['#FF6384', '#621da9', '#a84bde', '#e25788', '#ffb039']
+        }],
+        labels: ['有效', '链接无法访问', '链接非隐私政策', '链接为APP隐私政策', '链接为无数据声明的SDK隐私政策']
+      };
+    },
+    complianceData() {
+      return {
+        datasets: [{
+          data: [this.statistics.complianceGroupNum, this.statistics.lackDataNum, this.statistics.fuzzyDataNum],
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+        }],
+        labels: ['合规', '缺失声明', '模糊声明']
+      };
+    }
   },
-  // data() {
-  //   return {
-  //     linkData: {
-  //       labels: ['有效', '无法访问', '非隐私政策', 'APP隐私政策', 'SDK隐私政策'],
-  //       datasets: [{
-  //         data: [95, 15, 110, 47, 48],
-  //         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-  //       }]
-  //     },
-  //     complianceData: {
-  //       labels: ['合规', '缺失声明', '模糊声明'],
-  //       datasets: [{
-  //         data: [278, 185, 155],
-  //         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-  //       }]
-  //     }
-  //   }
-  // },
   methods: {
     viewSources() {
       // Implement the function to view sources
     },
+    // 导出数据
     exportData() {
       const data = [
         ['类型', '数量', '比例'],
-        ['缺失声明数', 185, '30%'],
-        ['模糊声明数', 155, '25%'],
-        ['合规声明数', 278, '45%']
+        ['缺失声明数', this.statistics.lackDataNum, this.statistics.lackDataProportion],
+        ['模糊声明数', this.statistics.fuzzyDataNum, this.statistics.fuzzyDataProportion],
+        ['合规声明数', this.statistics.complianceGroupNum, this.statistics.complianceGroupProportion]
       ];
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, '统计数据');
       XLSX.writeFile(wb, '统计数据.xlsx');
     },
+
     async exportImage() {
       const charts = document.querySelector('.charts');
       const canvas = await html2canvas(charts);
@@ -152,6 +167,9 @@ export default {
       pdf.addImage(imgData, 'JPEG', 10, 10, 200, 200);
       pdf.save('统计报告.pdf');
     }
+  },
+  mounted() {
+    console.log(this.statistics)
   }
 }
 </script>

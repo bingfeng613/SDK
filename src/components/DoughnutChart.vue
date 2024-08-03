@@ -2,10 +2,9 @@
     <div class="doughnut-chart-container">
         <doughnut :data="data" :options="options" />
         <div class="chart-label">
-            {{ effectivePercentage }}%
-            <div>有效</div>
+            {{ centerLabel }}
+            <div>{{ centerText }}</div>
         </div>
-
     </div>
 </template>
 
@@ -23,6 +22,10 @@ export default {
     props: {
         data: {
             type: Object,
+            required: true
+        },
+        centerLabel: {
+            type: String,
             required: true
         }
     },
@@ -53,6 +56,9 @@ export default {
             const total = this.data.datasets[0].data.reduce((acc, val) => acc + val, 0)
             const effective = this.data.datasets[0].data[0] // assuming the first index is the effective count
             return ((effective / total) * 100).toFixed(2)
+        },
+        centerText() {
+            return `${this.effectivePercentage}%`
         }
     }
 }
@@ -70,5 +76,6 @@ export default {
     position: absolute;
     font-size: 1.5em;
     color: #000;
+    text-align: center;
 }
 </style>
