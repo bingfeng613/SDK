@@ -8,14 +8,23 @@ Vue.use(Vuex);
 const stats = {
   state: {
     statistics: {},
+    selectedApps: {
+      ids: [],
+      names: [],
+    },
   },
   mutations: {
     setStatistics(state, payload) {
       state.statistics = payload;
     },
+    setSelectedApps(state, payload) {
+      state.selectedApps.ids = payload.ids;
+      state.selectedApps.names = payload.names;
+    },
   },
   getters: {
     statistics: (state) => state.statistics,
+    selectedApps: (state) => state.selectedApps,
   },
 };
 

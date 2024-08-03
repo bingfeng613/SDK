@@ -188,6 +188,7 @@ export default {
       }
       // 调用成功 再进行跳转
       const selectedIds = this.selectedItems.map(item => item.id);
+      const selectedAppNames = this.selectedItems.map(item => item.appName);
       // console.log(selectedIds)
       try {
         const response = await fetch(`http://127.0.0.1:8000/statistics/?ids=${JSON.stringify(selectedIds)}`);
@@ -198,6 +199,7 @@ export default {
         }
         const data = await response.json();
         this.$store.commit('setStatistics', data);
+        this.$store.commit('setSelectedApps', { ids: selectedIds, names: selectedAppNames });
         // console.log(data)
         // 调用成功 再进行跳转
         this.$router.push({ name: 'user' });

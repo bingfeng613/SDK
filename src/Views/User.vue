@@ -52,6 +52,18 @@
         </div>
       </div>
     </div>
+
+    <el-dialog title="解析来源" :visible.sync="dialogVisible" width="30%" @close="handleClose">
+      <el-list>
+        <el-list-item v-for="name in selectedAppNames" :key="name" class="list-item">
+          <span class="app-name">{{ name }}</span>
+        </el-list-item>
+      </el-list>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">关闭</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -60,15 +72,22 @@ import { mapState } from 'vuex';
 import DoughnutChart from '@/components/DoughnutChart.vue';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import * as XLSX from 'xlsx';
+import axios from "axios";
 
 export default {
   components: {
     DoughnutChart
   },
+  data() {
+    return {
+      dialogVisible: false
+    };
+  },
   computed: {
     ...mapState({
       statistics: state => state.stats.statistics,
+      selectedAppNames: state => state.stats.selectedApps.names,
+      selectedAppIds: state => state.stats.selectedApps.ids
     }),
     linkDetails() {
       return {
@@ -134,20 +153,44 @@ export default {
   },
   methods: {
     viewSources() {
-      // Implement the function to view sources
+      this.dialogVisible = true;
+    },
+    handleClose() {
+      this.dialogVisible = false;
     },
     // 导出数据
-    exportData() {
-      const data = [
-        ['类型', '数量', '比例'],
-        ['缺失声明数', this.statistics.lackDataNum, this.statistics.lackDataProportion],
-        ['模糊声明数', this.statistics.fuzzyDataNum, this.statistics.fuzzyDataProportion],
-        ['合规声明数', this.statistics.complianceGroupNum, this.statistics.complianceGroupProportion]
-      ];
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, '统计数据');
-      XLSX.writeFile(wb, '统计数据.xlsx');
+    async exportData() {
+      console.log(this.selectedAppIds);
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/statistics/excel/", {
+          params: {
+            ids: JSON.stringify(this.selectedAppIds)
+          },
+          responseType: 'blob' // 确保响应是一个 Blob 对象
+        });
+
+        // 检查响应的内容类型
+        const contentType = response.headers['content-type'];
+        console.log("Content Type:", contentType);
+
+        // 创建一个URL对象指向Blob对象，并指定类型
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+
+        // 创建一个<a>标签元素
+        const link = document.createElement('a');
+        link.href = url;
+        // 为文件设置下载名称
+        link.setAttribute('download', 'statistics.xlsx');
+        // 将<a>标签添加到页面中
+        document.body.appendChild(link);
+        // 触发点击事件下载文件
+        link.click();
+        // 移除<a>标签
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error("Error exporting data:", error);
+      }
     },
 
     async exportImage() {
@@ -175,6 +218,24 @@ export default {
 </script>
 
 <style scoped>
+.dialog-footer {
+  text-align: right;
+}
+
+.el-list-item {
+  padding: 5px 0;
+}
+
+.app-name {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #dcdcdc;
+  border-radius: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
 .container {
   font-family: 'PingFang SC', sans-serif;
   padding: 20px;
