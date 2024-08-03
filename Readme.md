@@ -17,3 +17,9 @@
 在终端执行
 npm install    -> 有warning等内容不要紧
 npm run serve   
+
+### 后端运行
+cd backend
+下载依赖 pip install -r requirements.txt
+设置数据库 导入sql文件，修改setting.py内DATABASES信息
+启动后端 python manage.py runserver 

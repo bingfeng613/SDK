@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Download Excel Example</title>
+    <script>
+        function downloadExcel() {
+            // 防止 CSRF 令牌问题，实际部署时需要根据后端需求添加
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            const ids = [4,5];
+            const data = {
+                ids: ids
+            };
+
+            fetch('http://127.0.0.1:8000/apps/excel/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // 如果响应状态码为 200-299，处理下载
+                    return response.blob(); // 将响应体转换为 blob
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(blob => {
+                // 创建一个链接并模拟点击，触发文件下载
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'apps_export.xlsx'; // 指定下载文件的名称
+                document.body.appendChild(a);
+                a.click();
+                a.remove(); // 清理
+                window.URL.revokeObjectURL(url); // 释放对象 URL
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <button onclick="downloadExcel()">Download Excel</button>
+    <form method="post" action="/path/to/your/csrf/token/endpoint/">
+        <!-- 用于自动填充 CSRF token 的隐藏输入字段 -->
+        <input type="hidden" name="csrfmiddlewaretoken" value="your_csrf_token_here">
+    </form>
+</body>
+</html>
