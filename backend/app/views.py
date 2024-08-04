@@ -1,4 +1,5 @@
 import io
+import json
 import os
 import zipfile
 
@@ -63,7 +64,6 @@ class UserRegistrationView(APIView):
 
 # 上传文件
 # todo：接文本解析框架
-# todo：接文件上传腾讯云
 class AppUploadView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
@@ -76,7 +76,6 @@ class AppUploadView(APIView):
         if not cos_config:
             return Response({'error': 'CosConfig not found.'}, status=400)
 
-        # print(cos_config.region,cos_config.secret_id,cos_config.secret_key)
         config = CosConfig(Region=cos_config.region, SecretId=cos_config.secret_id, SecretKey=cos_config.secret_key)
         client = CosS3Client(config)
 
@@ -90,20 +89,25 @@ class AppUploadView(APIView):
                 CacheControl='max-age=3600'
             )
 
-            # print(response)
-            # file_url = response.get('Location')
-            # print('note1')
-            # print(file_url)
-            # print('note2')
             file_url = f"https://{cos_config.bucket_name}.cos.{cos_config.region}.myqcloud.com/{file.name}"
 
             app = App(
                 appName='test appName',
-                lackDataNum=0,
-                fuzzyDataNum=0,
-                brokenLinkNum=0,
+                totalDataNum=10,
+                totalUrlNum=10,
+                lackDataNum=1,
+                fuzzyDataNum=2,
+                brokenLinkNum=6,
                 lackData='test lackData',
                 fuzzyData='test fuzzyData',
+                UnableToConnectNum=1,
+                NotPrivacyPolicyNum=2,
+                appPrivacyPolicyNum=1,
+                notDataInsidePrivacyPolicyNum=2,
+                UnableToConnectLink='test UnableToConnectLink',
+                NotPrivacyPolicyLink='test NotPrivacyPolicyLink',
+                appPrivacyPolicyLink='test appPrivacyPolicyLink',
+                notDataInsidePrivacyPolicyLink='test notDataInsidePrivacyPolicyLink',
                 brokenLink='test brokenLink',
                 htmlUrl=file_url
             )
@@ -146,10 +150,6 @@ class AppDeleteView(generics.GenericAPIView):
 
 class AppExcelView(APIView):
     def post(self, request, *args, **kwargs):
-        # data = JSONParser().parse(request)
-        #
-        # app_ids = data.get('ids')
-        # json or raw？
         app_ids = request.data.get('ids')
 
         if app_ids:
@@ -235,38 +235,64 @@ class AppDownloadView(APIView):
         return Response({'error': 'No files to download.'}, status=status.HTTP_404_NOT_FOUND)
 
 # 统计数据
-# 返回固定数据
-# todo:填完数据库后，加上计算逻辑
 class StatisticsView(APIView):
     def get(self, request, *args, **kwargs):
-        ids = request.query_params.getlist('ids')
-        if ids:
-            # filtered_data = self.filter_data_by_ids(ids)
-            # 计算逻辑
-            pass
+
+        ids_str = request.query_params.get('ids')
+        if ids_str:
+            try:
+                ids = json.loads(ids_str)
+                if not isinstance(ids, list):
+                    raise ValueError("ids parameter is not a list")
+            except json.JSONDecodeError:
+                return Response({'error': 'ids parameter is not valid JSON'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'error': 'ids must be provided'}, status=400)
+            return Response({'error': 'ids must be provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            data_records = App.objects.filter(id__in=ids)
+        except App.DoesNotExist:
+            return Response({'error': 'One or more ids are not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        total_app_num = len(ids)
+        total_declare_group_num = sum(item.totalDataNum for item in data_records)
+        total_declare_url_num = sum(item.totalUrlNum for item in data_records)
+
+        total_lack_data_num = sum(item.lackDataNum for item in data_records)
+        total_fuzzy_data_num = sum(item.fuzzyDataNum for item in data_records)
+        total_compliance_group_num = total_declare_group_num-total_lack_data_num-total_fuzzy_data_num
+
+        total_unableToConnect_num = sum(item.UnableToConnectNum for item in data_records)
+        total_notPrivacyPolicy_num = sum(item.NotPrivacyPolicyNum for item in data_records)
+        total_appPrivacyPolicy_num = sum(item.appPrivacyPolicyNum for item in data_records)
+        total_notDataInsidePrivacyPolicy_num = sum(item.notDataInsidePrivacyPolicyNum for item in data_records)
+        total_compliance_url_num = total_declare_url_num-total_unableToConnect_num-total_notPrivacyPolicy_num-total_appPrivacyPolicy_num-total_notDataInsidePrivacyPolicy_num
+
+        print(total_lack_data_num, total_fuzzy_data_num, total_app_num)
+
 
         data = {
-            "appNum": 30,
-            "declareGroupNum": 618,
-            "declareUrlNum": 315,
-            "complianceGroupNum": 278,
-            "complianceGroupProportion": "45%",
-            "lackDataNum": 185,
-            "lackDataProportion": "30%",
-            "fuzzyDataNum": 155,
-            "fuzzyDataProportion": "25%",
-            "complianceUrlNum": 95,
-            "complianceUrlProportion": "30%",
-            "UnableToConnectNum": 15,
-            "UnableToConnectProportion": "5%",
-            "NotPrivacyPolicyNum": 110,
-            "NotPrivacyPolicyProportion": "35%",
-            "appPrivacyPolicyNum": 47,
-            "appPrivacyPolicyProportion": "15%",
-            "notDataInsidePrivacyPolicyNum": 48,
-            "notDataInsidePrivacyPolicyProportion": "15%"
+            "appNum": total_app_num,
+            "declareGroupNum": total_declare_group_num,
+            "declareUrlNum": total_declare_url_num,
+
+            "complianceGroupNum": total_compliance_group_num,
+            "complianceGroupProportion": f"{round(total_compliance_group_num / total_declare_group_num* 100, 2)}%",
+            "lackDataNum": total_lack_data_num,
+            "lackDataProportion": f"{round(total_lack_data_num / total_declare_group_num* 100, 2)}%",
+            "fuzzyDataNum": total_fuzzy_data_num,
+            "fuzzyDataProportion": f"{round(total_fuzzy_data_num / total_declare_group_num* 100, 2)}%",
+
+            "complianceUrlNum": total_compliance_url_num,
+            "complianceUrlProportion": f"{round(total_compliance_url_num / total_declare_url_num* 100, 2)}%",
+            "UnableToConnectNum": total_unableToConnect_num,
+            "UnableToConnectProportion": f"{round(total_unableToConnect_num / total_declare_url_num* 100, 2)}%",
+            "NotPrivacyPolicyNum": total_notPrivacyPolicy_num,
+            "NotPrivacyPolicyProportion": f"{round(total_notPrivacyPolicy_num / total_declare_url_num* 100, 2)}%",
+            "appPrivacyPolicyNum": total_appPrivacyPolicy_num,
+            "appPrivacyPolicyProportion": f"{round(total_appPrivacyPolicy_num / total_declare_url_num* 100, 2)}%",
+            "notDataInsidePrivacyPolicyNum": total_notDataInsidePrivacyPolicy_num,
+            "notDataInsidePrivacyPolicyProportion": f"{round(total_notDataInsidePrivacyPolicy_num / total_declare_url_num* 100, 2)}%",
         }
         return Response(data, status=status.HTTP_200_OK)
 

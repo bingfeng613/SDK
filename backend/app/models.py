@@ -11,14 +11,30 @@ class User(models.Model):
 
 class App(models.Model):
     id = models.AutoField(primary_key=True)
+
     appName = models.CharField(max_length=100)
+    totalDataNum = models.IntegerField()
+    totalUrlNum = models.IntegerField()
+
     lackDataNum = models.IntegerField()
     fuzzyDataNum = models.IntegerField()
-    brokenLinkNum = models.IntegerField()
 
     lackData = models.TextField()
     fuzzyData = models.TextField()
+
+    UnableToConnectNum = models.IntegerField()
+    NotPrivacyPolicyNum = models.IntegerField()
+    appPrivacyPolicyNum = models.IntegerField()
+    notDataInsidePrivacyPolicyNum = models.IntegerField()
+
+    UnableToConnectLink = models.TextField()
+    NotPrivacyPolicyLink = models.TextField()
+    appPrivacyPolicyLink = models.TextField()
+    notDataInsidePrivacyPolicyLink = models.TextField()
+
+    brokenLinkNum = models.IntegerField()
     brokenLink = models.TextField()
+
     htmlUrl = models.TextField()
 
 class MyCosConfig(models.Model):
