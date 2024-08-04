@@ -139,12 +139,12 @@ export default {
             this.$store.commit('setMenu', []);  // 清除菜单
             this.$store.commit('setAccount', '');  // 清除账户信息
             cookie.remove('token');
-            this.clearRoutes();
             this.$router.push('/login');
         },
         openChangePasswordDialog() {
             this.changePasswordDialogVisible = true;
         },
+        // 修改密码
         submitChangePassword() {
             this.$refs.changePasswordForm.validate((valid) => {
                 if (valid) {
@@ -157,11 +157,13 @@ export default {
                         old_password: this.changePasswordForm.oldPassword,
                         new_password: this.changePasswordForm.newPassword
                     }).then(response => {
-                        if (response.data.status === 200) {
+                        console.log(response)
+                        // console.log(response.data.message);
+                        if (response.status === 200) {
                             this.$message.success('密码修改成功');
                             this.logout();
                         } else {
-                            this.$message.error('密码修改失败，请重试');
+                            this.$message.error(response.data.message);
                         }
                     }).catch(error => {
                         this.$message.error('密码修改失败，请重试',error);
