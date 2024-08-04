@@ -1,24 +1,29 @@
 <template>
-    <div class="upload-policy-container">
-        <div class="upload-box">
-            <input type="file" id="file-upload" accept=".html,.docx,.pdf,.txt" multiple @change="handleFileSelect"
-                style="display: none;" />
-            <label for="file-upload" class="upload-button">上传隐私政策</label>
-            <p>请选择一个/多个APP隐私政策html文件上传</p>
-            <ul>
-                <li v-for="(file, index) in selectedFiles" :key="index">
-                    {{ file.name }}
-                    <button @click="removeFile(index)">删除</button>
-                </li>
-            </ul>
-            <button @click="uploadFiles" :disabled="selectedFiles.length === 0">确定上传</button>
+    <div>
+        <main-header></main-header>
+        <div class="upload-policy-container">
+            <div class="upload-box">
+                <input type="file" id="file-upload" accept=".html,.docx,.pdf,.txt" multiple @change="handleFileSelect"
+                    style="display: none;" />
+                <label for="file-upload" class="upload-button">上传隐私政策</label>
+                <p>请选择一个/多个APP隐私政策html文件上传</p>
+                <ul>
+                    <li v-for="(file, index) in selectedFiles" :key="index">
+                        {{ file.name }}
+                        <button class="delete-button" @click="removeFile(index)">删除</button>
+                    </li>
+                </ul>
+                <button class="confirm-button" @click="uploadFiles" :disabled="selectedFiles.length === 0">确定上传</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 import { MessageBox } from 'element-ui';
+import MainHeader from '@/components/MainHeader.vue';
 export default {
+  components: { MainHeader },
     data() {
         return {
             selectedFiles: [],
@@ -64,18 +69,23 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 70vh;
+    margin: 0 20px;
+    border: 2px solid #ccc;
+    border-radius: 20px;
+    background-color: #f5f5f5;
 }
 
 .upload-box {
     text-align: center;
-    border: 2px solid #e0e0e0;
-    padding: 40px;
-    border-radius: 10px;
+    border: 2px solid #ccc;
+    padding: 60px;
+    border-radius: 20px;
+    background-color: white;
 }
 
 .upload-button {
-    background-color: #3f51b5;
+    background-color: #336FFF;
     color: white;
     padding: 20px 40px;
     border-radius: 5px;
@@ -84,8 +94,10 @@ export default {
 }
 
 p {
-    margin-top: 20px;
-    font-size: 16px;
+    margin-top: 60px;
+    margin-bottom: 40px;
+    font-size: 20px;
+    font-weight: bold;
     color: #666;
 }
 
@@ -98,10 +110,10 @@ li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
-button {
+.delete-button {
     background-color: #f44336;
     color: white;
     border: none;
@@ -110,8 +122,19 @@ button {
     border-radius: 3px;
 }
 
-button:disabled {
-    background-color: #e0e0e0;
+.confirm-button {
+    background-color: #336FFF; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color 0.3s;
+    margin-top: 10px; 
+}
+
+.confirm-button:disabled {
+    background-color: #ccc;
     cursor: not-allowed;
 }
 </style>

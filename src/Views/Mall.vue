@@ -1,29 +1,31 @@
 <template>
-  <div class="mall-container">
-    <h1>P-Sticker:SDK隐私声明合规检测平台</h1>
-    <div class="actions">
-      <el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-      <el-input v-model="search" placeholder="搜索" prefix-icon="el-icon-search" class="search-input"
-        @input="handleSearch"></el-input>
-      <el-button type="primary" @click="confirmDelete">删除</el-button>
-      <el-button type="primary" @click="downloadOriginal">下载原文</el-button>
-      <el-button type="primary" @click="exportData">导出数据</el-button>
-      <el-button type="primary" @click="generateStats">生成统计</el-button>
-    </div>
-    <el-table v-loading="loading" :data="tableData" style="width: 100%" @selection-change="handleSelectionChange"
-      ref="table">
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="appName" label="APP名称" width="150"></el-table-column>
-      <el-table-column prop="lackDataNum" label="缺失声明数" width="150"></el-table-column>
-      <el-table-column prop="lackData" label="缺失声明项" width="150"></el-table-column>
-      <el-table-column prop="fuzzyDataNum" label="模糊声明项" width="150"></el-table-column>
-      <el-table-column prop="fuzzyData" label="模糊声明项数" width="150"></el-table-column>
-      <el-table-column prop="brokenLinkNum" label="无效链接数" width="150"></el-table-column>
-      <el-table-column prop="brokenLink" label="无效链接项" width="300"></el-table-column>
-    </el-table>
-    <div class="pagination">
-      <el-pagination @current-change="handlePageChange" :current-page="currentPage" :page-size="pageSize"
-        layout="prev, pager, next" :total="total"></el-pagination>
+  <div>
+    <main-header></main-header>
+    <div class="mall-container">
+      <div class="actions">
+        <el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+        <el-input v-model="search" placeholder="搜索" prefix-icon="el-icon-search" class="search-input"
+          @input="handleSearch"></el-input>
+        <el-button type="primary" @click="confirmDelete">删除</el-button>
+        <el-button type="primary" @click="downloadOriginal">下载原文</el-button>
+        <el-button type="primary" @click="exportData">导出数据</el-button>
+        <el-button type="primary" @click="generateStats">生成统计</el-button>
+      </div>
+      <el-table v-loading="loading" :data="tableData" style="width: 100%" @selection-change="handleSelectionChange"
+        ref="table">
+        <el-table-column type="selection" width="55" align="center"></el-table-column>
+        <el-table-column prop="appName" label="APP名称" align="center"></el-table-column>
+        <el-table-column prop="lackDataNum" label="缺失声明数" align="center"></el-table-column>
+        <el-table-column prop="lackData" label="缺失声明项" align="center"></el-table-column>
+        <el-table-column prop="fuzzyDataNum" label="模糊声明项" align="center"></el-table-column>
+        <el-table-column prop="fuzzyData" label="模糊声明项数" align="center"></el-table-column>
+        <el-table-column prop="brokenLinkNum" label="无效链接数" align="center"></el-table-column>
+        <el-table-column prop="brokenLink" label="无效链接项" align="center"></el-table-column>
+      </el-table>
+      <div class="pagination">
+        <el-pagination @current-change="handlePageChange" :current-page="currentPage" :page-size="pageSize"
+          layout="prev, pager, next" :total="total"></el-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -33,8 +35,10 @@ import { export_json_to_excel } from './Export2Excel';
 import { mapActions } from 'vuex';
 import axios from 'axios';
 import { MessageBox } from 'element-ui';
+import MainHeader from '@/components/MainHeader.vue';
 
 export default {
+  components: { MainHeader },
   data() {
     return {
       checkAll: false,
@@ -227,12 +231,13 @@ export default {
 <style scoped>
 .mall-container {
   padding: 20px;
-}
-
-h1 {
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
+  border: 2px solid #ccc;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+  margin: 0 20px;
+  background-color: #f5f5f5;
 }
 
 .actions {
@@ -248,6 +253,8 @@ h1 {
 
 .actions .el-button {
   margin-left: 10px;
+  background-color: #336FFF;
+  border-color:#336FFF;
 }
 
 .pagination {

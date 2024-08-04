@@ -11,11 +11,12 @@
                 <a href="#" class="logout" @click="logout">退出</a>
             </div>
         </div>
+
         <el-menu-item @click="clickItem(item)" v-for="item in noChildren" :key="item.name" :index="item.name">
             <i :class="`el-icon-${item.icon}`"></i>
             <span slot="title">{{ item.label }}</span>
         </el-menu-item>
-        <el-submenu v-for="item in hasChildren" :key="item.label" :index="item.label">
+        <!-- <el-submenu v-for="item in hasChildren" :key="item.label" :index="item.label">
             <template slot="title">
                 <i :class="`el-icon-${item.icon}`"></i>
                 <span slot="title">{{ item.label }}</span>
@@ -23,7 +24,7 @@
             <el-menu-item-group v-for="subItem in item.children" :key="subItem.name">
                 <el-menu-item @click="clickItem(subItem)" :index="subItem.name">{{ subItem.label }}</el-menu-item>
             </el-menu-item-group>
-        </el-submenu>
+        </el-submenu> -->
 
         <!-- Change Password Dialog -->
         <el-dialog title="修改密码" :visible.sync="changePasswordDialogVisible">
@@ -51,7 +52,7 @@
 .el-menu-vertical-demo {
     width: 200px;
     min-height: 100vh;
-    border-right: none;
+    // border-right: 2px solid #ccc;
 }
 
 .user {
@@ -59,7 +60,7 @@
     flex-direction: column;
     align-items: center;
     padding: 20px 0;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 2px solid #ccc;
     background-color: #f5f5f5;
 
     img {
@@ -74,7 +75,7 @@
 
         .name {
             font-size: 18px;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         .access {
@@ -88,10 +89,20 @@
             font-size: 14px;
             text-decoration: none;
             cursor: pointer;
-            margin-top: 5px;
+            margin-top: 10px;
+        }
+
+        .spacer {
+            margin-left: 10px; 
+            margin-right: 10px; 
         }
     }
 }
+
+.el-menu {
+    border-right: 2px solid #ccc; 
+}
+
 </style>
 
 <script>

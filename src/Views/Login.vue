@@ -53,7 +53,6 @@
 import Cookie from 'js-cookie'
 import { login, register } from '../api/index'
 
-
 export default {
     data() {
         return {
@@ -198,21 +197,32 @@ export default {
     z-index: 1;
     width: 100%;
     height: 100%;
-    padding: 50px;
+    padding: 100px;
+    margin-right: 100px;
     box-sizing: border-box;
 }
 
+// @font-face {
+//     font-family: "阿里妈妈东方大楷 Regular";font-weight: 400;src: url("//at.alicdn.com/wf/webfont/6NuqIAn2wTqw/u8V3AwN3XzjB.woff2") format("woff2"),
+//     url("//at.alicdn.com/wf/webfont/6NuqIAn2wTqw/MVl7zMPIYXpf.woff") format("woff");
+//     font-display: swap;
+// }
+
 .text_section {
     text-align: left;
-    color: #333;
+    font-family: "阿里妈妈东方大楷 Regular", 'Weibei TC', 'Microsoft YaHei', sans-serif;
 
     h1 {
-        font-size: 24px;
+        font-size: 40px;
+        font-weight: 200;
+        color: #333;
+        margin-top: 100px;
         margin-bottom: 10px;
     }
 
     p {
-        font-size: 14px;
+        font-size: 18px;
+        color: #727070;
         margin-bottom: 20px;
     }
 }
@@ -234,7 +244,7 @@ export default {
     }
 
     .el-form-item {
-        margin-bottom: 20px;
+        margin-bottom: 30px;
     }
 
     .login_button {
@@ -245,7 +255,7 @@ export default {
     .register_link {
         display: flex;
         justify-content: space-between;
-        margin-top: 10px;
+        margin-top: 20px;
 
         a {
             color: #409EFF;
@@ -256,7 +266,7 @@ export default {
 
 .footer {
     text-align: left;
-    color: #333;
-    font-size: 12px;
+    color: #727070;
+    font-size: 14px;
 }
 </style>

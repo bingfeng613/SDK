@@ -1,7 +1,8 @@
 <template>
-  <div class="container">
+  <div>
+    <main-header></main-header>
+    <div class="container">
     <div class="header">
-      <h1>P-Sticker: SDK隐私声明合规检测平台</h1>
       <div class="buttons">
         <button @click="viewSources">查看解析来源</button>
         <button @click="exportData">导出统计数据</button>
@@ -10,33 +11,16 @@
       </div>
     </div>
     <div class="content">
-      <div class="card summary">
-        <h3>共导入：</h3>
-        <p>{{ statistics.appNum }} 篇APP隐私政策</p>
-        <p>共解析：</p>
-        <p>{{ statistics.declareGroupNum }} 个声明组</p>
-        <p>{{ statistics.declareUrlNum }} 个声明链接</p>
-      </div>
-      <div class="charts">
-        <div class="chart">
-          <h3>链接有效性</h3>
-          <doughnut-chart :data="linkData" center-label="有效"></doughnut-chart>
-
-          <div class="details">
-            <p>{{ statistics.complianceUrlNum }} 有效链接数</p>
-            <p>of {{ statistics.declareUrlNum }} 总链接数</p>
-            <div class="detail-item" v-for="(value, label) in linkDetails" :key="label">
-              <span class="detail-label">{{ label }}：</span>
-              <span class="detail-value">{{ value.count }} / {{ value.proportion }}</span>
-              <div class="bar-bg">
-                <div class="bar" :style="{ width: value.proportion, backgroundColor: value.color }"></div>
-              </div>
-            </div>
-          </div>
+      <div class="left-part">
+        <div class="card-summary">
+          <h3>共导入：</h3>
+          <p>{{ statistics.appNum }} 篇APP隐私政策</p>
+          <p>共解析：</p>
+          <p>{{ statistics.declareGroupNum }} 个声明组</p>
+          <p>{{ statistics.declareUrlNum }} 个声明链接</p>
         </div>
-        <div class="chart">
+        <div class="chart-data">
           <h3>数据合规性</h3>
-
           <doughnut-chart :data="complianceData" center-label="合规"></doughnut-chart>
           <div class="details">
             <p>{{ statistics.complianceGroupNum }} 合规声明数</p>
@@ -47,6 +31,23 @@
               <div class="bar-bg">
                 <div class="bar" :style="{ width: value.proportion, backgroundColor: value.color }"></div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-url">
+        <h3>链接有效性</h3>
+        <doughnut-chart :data="linkData" center-label="有效"></doughnut-chart>
+
+        <div class="details">
+          <p>{{ statistics.complianceUrlNum }} 有效链接数</p>
+          <p>of {{ statistics.declareUrlNum }} 总链接数</p>
+          <div class="detail-item" v-for="(value, label) in linkDetails" :key="label">
+            <span class="detail-label">{{ label }}：</span>
+            <span class="detail-value">{{ value.count }} / {{ value.proportion }}</span>
+            <div class="bar-bg">
+              <div class="bar" :style="{ width: value.proportion, backgroundColor: value.color }"></div>
             </div>
           </div>
         </div>
@@ -63,8 +64,9 @@
         <el-button @click="dialogVisible = false">关闭</el-button>
       </div>
     </el-dialog>
-
   </div>
+  </div>
+
 </template>
 
 <script>
@@ -73,10 +75,12 @@ import DoughnutChart from '@/components/DoughnutChart.vue';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import axios from "axios";
+import MainHeader from '@/components/MainHeader.vue';
 
 export default {
   components: {
-    DoughnutChart
+    DoughnutChart,
+    MainHeader
   },
   data() {
     return {
@@ -239,6 +243,13 @@ export default {
 .container {
   font-family: 'PingFang SC', sans-serif;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+  margin: 0 20px;
+  /* border: 2px solid #ccc;
+  border-radius: 20px;
+  background-color: #f5f5f5; */
 }
 
 .header {
@@ -247,52 +258,52 @@ export default {
 
 .buttons {
   display: flex;
-  justify-content: center;
-  margin-top: 10px;
+  justify-content: left;
 }
 
 .buttons button {
-  margin: 0 10px;
+  margin-top: 0;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  margin-left: 20px;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: #336FFF;
+  border-color:#336FFF;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s;
-}
-
-.buttons button:hover {
-  background-color: #0056b3;
 }
 
 .content {
   display: flex;
   justify-content: space-around;
   margin-top: 20px;
+  flex-wrap: wrap;
 }
 
-.card {
-  border: 1px solid #ccc;
+.card-summary {
   padding: 20px;
+  border: 1px solid #ccc;
+  margin-bottom:30px;
   border-radius: 10px;
-  width: 30%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.charts {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 65%;
+.chart-data {
+  border: 1px solid #ccc;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.chart {
+.chart-url {
   border: 1px solid #ccc;
-  padding: 20px;
+  padding: 30px;
   border-radius: 10px;
-  margin-bottom: 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 40%;
 }
 
 .details {
