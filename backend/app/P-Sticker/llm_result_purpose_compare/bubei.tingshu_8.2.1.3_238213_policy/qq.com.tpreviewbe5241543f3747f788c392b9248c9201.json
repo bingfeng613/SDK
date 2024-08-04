@@ -1,0 +1,284 @@
+[
+  {
+    "data": [
+      "Android ID",
+      "QIMEI",
+      "OAID",
+      "IP地址"
+    ],
+    "function": [
+      "向用户提供消息推送技术服务",
+      "进行链路调节",
+      "相互促活被关闭的SDK推送进程",
+      "保障用户可以及时接收到推送消息"
+    ],
+    "llm_result": {
+      "Y/N": "Y",
+      "similarStrings": [
+        "向用户提供消息推送技术服务"
+      ]
+    }
+  },
+  {
+    "data": [
+      "IMEI"
+    ],
+    "purpose": [
+      "识别唯一用户",
+      "确保消息推送送达",
+      "优化推送通道资源",
+      "提高消息送达率"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "AndroidID"
+    ],
+    "purpose": [
+      "识别唯一用户",
+      "确保消息推送送达",
+      "优化推送通道资源",
+      "提高消息送达率"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "手机品牌机型"
+    ],
+    "function": [
+      "用于筛选设备进行推送、配置下发"
+    ],
+    "llm_result": {
+      "Y/N": "Y",
+      "similarStrings": [
+        "用于筛选设备进行推送、配置下发"
+      ]
+    }
+  },
+  {
+    "data": [
+      "安卓版本"
+    ],
+    "purpose": [
+      "筛选设备进行推送、配置下发"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "连接的Wi-Fi信息"
+    ],
+    "purpose": [
+      "记录SDK在当前Wi-Fi下最后连接到服务器的IP地址",
+      "加快网络访问"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "通知权限"
+    ],
+    "purpose": [
+      "实现app可以正常使用系统提供的推送通知能力"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "设备标识信息",
+      "网络信息",
+      "设备状态信息",
+      "应用使用信息"
+    ],
+    "purpose": [
+      "在对应设备上推送消息"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "第三方开发者和/或终端用户的个人信息"
+    ],
+    "purpose": [
+      "实现TME PUSH SDK产品和/或服务必要功能"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "第三方开发者和/或终端用户的个人信息"
+    ],
+    "purpose": [
+      "实现TME PUSH SDK产品和/或服务必要功能"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "第三方开发者和/或终端用户的个人信息"
+    ],
+    "purpose": [
+      "实现TME PUSH SDK产品和/或服务必要功能"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "第三方开发者和/或终端用户的个人信息"
+    ],
+    "purpose": [
+      "实现TME PUSH SDK产品和/或服务必要功能"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "第三方终端用户的个人信息"
+    ],
+    "function": [
+      "提供TME PUSH SDK产品和/或服务",
+      "与第三方功能对应的目的"
+    ],
+    "llm_result": {
+      "Y/N": "Y",
+      "similarStrings": [
+        "提供TME PUSH SDK产品和/或服务"
+      ]
+    }
+  },
+  {
+    "data": [
+      "Android ID",
+      "QIMEI",
+      "OAID",
+      "IP地址"
+    ],
+    "purpose": [
+      "进行链路调节",
+      "相互促活被关闭的SDK推送进程",
+      "保障用户可以及时接收到推送的消息"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "IMEI"
+    ],
+    "purpose": [
+      "识别唯一用户",
+      "确保消息推送送达",
+      "优化推送通道资源",
+      "整合消息推送的通道资源",
+      "提高消息送达率"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "AndroidID"
+    ],
+    "purpose": [
+      "识别唯一用户",
+      "确保消息推送送达",
+      "优化推送通道资源",
+      "整合消息推送的通道资源",
+      "提高消息送达率"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "手机品牌机型"
+    ],
+    "purpose": [
+      "筛选设备进行推送、配置下发"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "安卓版本"
+    ],
+    "purpose": [
+      "筛选设备进行推送",
+      "配置下发"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "连接的Wi-Fi信息"
+    ],
+    "purpose": [
+      "记录SDK在当前Wi-Fi下最后连接到服务器的IP地址",
+      "减少连接到服务器的时间",
+      "加快网络访问"
+    ],
+    "llm_result": {
+      "Y/N": "N",
+      "similarStrings": []
+    }
+  },
+  {
+    "data": [
+      "第三方终端用户的个人信息"
+    ],
+    "function": [
+      "提供TME PUSH SDK产品和/或服务",
+      "与第三方功能对应的目的"
+    ],
+    "llm_result": {
+      "Y/N": "Y",
+      "similarStrings": [
+        "提供TME PUSH SDK产品和/或服务"
+      ]
+    }
+  }
+]
