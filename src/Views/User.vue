@@ -198,22 +198,87 @@ export default {
     },
 
     async exportImage() {
-      const charts = document.querySelector('.charts');
-      const canvas = await html2canvas(charts);
-      const imgData = canvas.toDataURL('image/jpeg');
-      const link = document.createElement('a');
-      link.href = imgData;
-      link.download = '统计图像.jpg';
-      link.click();
+      try {
+        // 获取图表元素
+        const chartDataElement = this.$el.querySelector('.chart-data');
+        const chartUrlElement = this.$el.querySelector('.chart-url');
+
+        // 使用 html2canvas 将第一个图表转换为图片
+        const chartDataCanvas = await html2canvas(chartDataElement);
+        const chartDataImage = chartDataCanvas.toDataURL('image/jpeg');
+
+        // 使用 html2canvas 将第二个图表转换为图片
+        const chartUrlCanvas = await html2canvas(chartUrlElement);
+        const chartUrlImage = chartUrlCanvas.toDataURL('image/jpeg');
+
+        // 创建一个 <a> 元素并触发下载第一个图表
+        const link1 = document.createElement('a');
+        link1.href = chartDataImage;
+        link1.download = 'data-compliance-chart.jpg';
+        document.body.appendChild(link1);
+        link1.click();
+        document.body.removeChild(link1);
+
+        // 创建一个 <a> 元素并触发下载第二个图表
+        const link2 = document.createElement('a');
+        link2.href = chartUrlImage;
+        link2.download = 'link-compliance-chart.jpg';
+        document.body.appendChild(link2);
+        link2.click();
+        document.body.removeChild(link2);
+
+      } catch (error) {
+        console.error('Error exporting images:', error);
+      }
     },
     async exportReport() {
-      const charts = document.querySelector('.charts');
-      const canvas = await html2canvas(charts);
-      const imgData = canvas.toDataURL('image/jpeg');
-      const pdf = new jsPDF();
-      pdf.addImage(imgData, 'JPEG', 10, 10, 200, 200);
-      pdf.save('统计报告.pdf');
+      try {
+        // 获取内容元素
+        const contentElement = this.$el.querySelector('.content');
+
+        // 使用 html2canvas 将内容转换为图片
+        const contentCanvas = await html2canvas(contentElement);
+        const contentImage = contentCanvas.toDataURL('image/jpeg');
+
+        // 创建 jsPDF 实例，设置为横向 A4 页面
+        const pdf = new jsPDF('landscape', 'mm', 'a4');
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        // 设置标题
+        const title = "P-Sticker: SDK Privacy Statement Compliance Detection Platform";
+        const titleFontSize = 16;
+        pdf.setFontSize(titleFontSize);
+        pdf.text(title, pageWidth / 2, 10, { align: 'center' });
+
+        // 计算图片显示区域
+        const titleHeight = titleFontSize + 10; // 标题高度 + 上下边距
+        const contentHeight = pageHeight - titleHeight - 10; // 剩余高度 - 底部边距
+
+        // 将内容图片缩放以适应页面
+        const imgProps = pdf.getImageProperties(contentImage);
+        const imgWidth = imgProps.width;
+        const imgHeight = imgProps.height;
+        const ratio = Math.min(pageWidth / imgWidth, contentHeight / imgHeight);
+
+        const pdfWidth = imgWidth * ratio;
+        const pdfHeight = imgHeight * ratio;
+
+        // 计算图片的位置，使其居中
+        const xOffset = (pageWidth - pdfWidth) / 2;
+        const yOffset = titleHeight;
+
+        // 添加图片到 PDF
+        pdf.addImage(contentImage, 'JPEG', xOffset, yOffset, pdfWidth, pdfHeight);
+
+        // 生成并下载 PDF
+        pdf.save('report.pdf');
+      } catch (error) {
+        console.error('Error exporting report:', error);
+      }
     }
+
   },
   mounted() {
     console.log(this.statistics)
