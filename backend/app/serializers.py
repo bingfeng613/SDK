@@ -50,6 +50,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['account', 'password']
 
+    def validate(self, data):
+        if User.objects.filter(account=data['account']).exists():
+            raise serializers.ValidationError('account already exists.')
+        return data
+
     def create(self, validated_data):
         # 密码哈希
         validated_data['password'] = make_password(validated_data['password'])

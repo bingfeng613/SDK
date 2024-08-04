@@ -2,7 +2,7 @@ from django.contrib.auth.hashers import check_password
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
-# todo：装饰器正常时候没生效
+#TODO：装饰器正常时候没生效
 def custom_exception_handler(exc, ctx):
     # print("note")
     response = exception_handler(exc, ctx)

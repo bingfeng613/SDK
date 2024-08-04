@@ -235,8 +235,6 @@ class AppDownloadView(APIView):
         return Response({'error': 'No files to download.'}, status=status.HTTP_404_NOT_FOUND)
 
 # 统计数据
-# 返回固定数据
-# todo:填完数据库后，加上计算逻辑
 class StatisticsView(APIView):
     def get(self, request, *args, **kwargs):
 
