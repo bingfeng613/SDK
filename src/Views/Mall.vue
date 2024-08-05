@@ -151,32 +151,22 @@ export default {
         return;
       }
 
-      const idsToDownload = this.selectedItems.map(item => item.id);
-
-      // Fetch the content of the selected items
-      const downloadPromises = this.selectedItems.map(item =>
-        axios.get(item.htmlUrl, { responseType: 'blob' })
-      );
-
-      // Wait for all the requests to complete
-      Promise.all(downloadPromises)
-        .then(responses => {
-          responses.forEach((response, index) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${this.selectedItems[index].appName}_privacy_policy.html`);
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-          });
-          this.$message.success('下载成功');
-        })
-        .catch(error => {
-          this.$message.error('下载过程中出现错误，请重试');
-          console.error('Error downloading items:', error);
-        });
+      this.selectedItems.forEach(item => {
+        const htmlUrl = item.htmlUrl;
+        try {
+          const link = document.createElement('a');
+          link.href = htmlUrl;
+          link.download = htmlUrl.substring(htmlUrl.lastIndexOf('/') + 1);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } catch (error) {
+          this.$message.error(`下载失败: ${item.appName} - ${htmlUrl}`);
+          console.error('Download error:', error);
+        }
+      });
     },
+    
     // 导出数据
     exportData() {
       if (this.selectedItems.length === 0) {
