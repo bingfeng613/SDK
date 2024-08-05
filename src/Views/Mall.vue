@@ -160,13 +160,14 @@ export default {
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
+          this.$message.success('下载成功');
         } catch (error) {
           this.$message.error(`下载失败: ${item.appName} - ${htmlUrl}`);
           console.error('Download error:', error);
         }
       });
     },
-    
+
     // 导出数据
     exportData() {
       if (this.selectedItems.length === 0) {

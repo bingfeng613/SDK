@@ -3,7 +3,7 @@
         <main-header></main-header>
         <div class="upload-policy-container">
             <div class="upload-box">
-                <input type="file" id="file-upload" accept=".html,.docx,.pdf,.txt" multiple @change="handleFileSelect"
+                <input type="file" id="file-upload" accept=".html" multiple @change="handleFileSelect"
                     style="display: none;" />
                 <label for="file-upload" class="upload-button">上传隐私政策</label>
                 <p>请选择一个/多个APP隐私政策html文件上传</p>
@@ -25,7 +25,7 @@ import MainHeader from '@/components/MainHeader.vue';
 import cookie from 'js-cookie'
 
 export default {
-  components: { MainHeader },
+    components: { MainHeader },
     data() {
         return {
             selectedFiles: [],
@@ -34,7 +34,13 @@ export default {
     },
     methods: {
         handleFileSelect(event) {
-            this.selectedFiles = Array.from(event.target.files);
+            const files = Array.from(event.target.files);
+            const invalidFiles = files.filter(file => file.type !== 'text/html');
+            if (invalidFiles.length > 0) {
+                this.$message.warning('只能上传html格式的文件');
+                return;
+            }
+            this.selectedFiles = files;
         },
         removeFile(index) {
             this.selectedFiles.splice(index, 1);
@@ -128,14 +134,14 @@ li {
 }
 
 .confirm-button {
-    background-color: #336FFF; 
+    background-color: #336FFF;
     color: white;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 3px;
     transition: background-color 0.3s;
-    margin-top: 10px; 
+    margin-top: 10px;
 }
 
 .confirm-button:disabled {
