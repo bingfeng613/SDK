@@ -83,6 +83,13 @@ export default {
     // 字段查询 获取数据
     async searchApps() {
       this.loading = true;
+
+      if(this.search ===''){
+        this.loading = false;
+        this.currentPage = 1;
+        this.fetchData();
+        return;
+      }
       try {
         const response = await axios.get('http://127.0.0.1:8000/apps/search', {
           params: {
