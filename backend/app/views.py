@@ -72,6 +72,10 @@ class AppUploadView(APIView):
         if not files:
             return Response({'error': 'No files provided.'}, status=400)
 
+        account = request.data.get('account')
+        if not account:
+            return Response({'error': 'Account parameter is required.'}, status=400)
+
         cos_config = MyCosConfig.objects.first()
         if not cos_config:
             return Response({'error': 'CosConfig not found.'}, status=400)
@@ -93,6 +97,7 @@ class AppUploadView(APIView):
 
             app = App(
                 appName='test appName',
+                account=account,
                 totalDataNum=10,
                 totalUrlNum=10,
                 lackDataNum=1,
@@ -119,9 +124,16 @@ class AppUploadView(APIView):
 
 # 已解析库
 class AppListView(generics.ListAPIView):
-    queryset = App.objects.all()
+    # queryset = App.objects.all()
     serializer_class = AppSerializer
     pagination_class = CustomPageNumberPagination
+
+    def get_queryset(self):
+        account = self.request.query_params.get('account', None)
+        if account is not None:
+            return App.objects.filter(account=account)
+        else:
+            return Response({'error': 'Account parameter is required.'}, status=400)
 
 class AppSearchView(generics.ListAPIView):
     queryset = App.objects.all()
@@ -129,11 +141,16 @@ class AppSearchView(generics.ListAPIView):
     pagination_class = CustomPageNumberPagination
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        keyword = self.request.query_params.get('keyword', None)
-        if keyword:
-            queryset = queryset.filter(Q(appName__icontains=keyword))
-        return queryset
+        account = self.request.query_params.get('account', None)
+        if account is not None:
+            all_set=App.objects.filter(account=account)
+            keyword = self.request.query_params.get('keyword', None)
+            if keyword:
+                queryset = all_set.filter(Q(appName__icontains=keyword))
+            return App.objects.filter(account=account)
+        else:
+            return Response({'error': 'Account parameter is required.'}, status=400)
+
 
 class AppDeleteView(generics.GenericAPIView):
     def delete(self, request, *args, **kwargs):
@@ -254,6 +271,8 @@ class StatisticsView(APIView):
         except App.DoesNotExist:
             return Response({'error': 'One or more ids are not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        print(type(data_records))
+
         total_app_num = len(ids)
         total_declare_group_num = sum(item.totalDataNum for item in data_records)
         total_declare_url_num = sum(item.totalUrlNum for item in data_records)
@@ -302,26 +321,63 @@ class StatisticsView(APIView):
 
 class StatisticsExcelView(APIView):
     def get(self, request, *args, **kwargs):
+
+        ids_str = request.query_params.get('ids')
+        if ids_str:
+            try:
+                ids = json.loads(ids_str)
+                if not isinstance(ids, list):
+                    raise ValueError("ids parameter is not a list")
+            except json.JSONDecodeError:
+                return Response({'error': 'ids parameter is not valid JSON'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': 'ids must be provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            data_records = App.objects.filter(id__in=ids)
+        except App.DoesNotExist:
+            return Response({'error': 'One or more ids are not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        print(type(data_records))
+
+        total_app_num = len(ids)
+        total_declare_group_num = sum(item.totalDataNum for item in data_records)
+        total_declare_url_num = sum(item.totalUrlNum for item in data_records)
+
+        total_lack_data_num = sum(item.lackDataNum for item in data_records)
+        total_fuzzy_data_num = sum(item.fuzzyDataNum for item in data_records)
+        total_compliance_group_num = total_declare_group_num - total_lack_data_num - total_fuzzy_data_num
+
+        total_unableToConnect_num = sum(item.UnableToConnectNum for item in data_records)
+        total_notPrivacyPolicy_num = sum(item.NotPrivacyPolicyNum for item in data_records)
+        total_appPrivacyPolicy_num = sum(item.appPrivacyPolicyNum for item in data_records)
+        total_notDataInsidePrivacyPolicy_num = sum(item.notDataInsidePrivacyPolicyNum for item in data_records)
+        total_compliance_url_num = total_declare_url_num - total_unableToConnect_num - total_notPrivacyPolicy_num - total_appPrivacyPolicy_num - total_notDataInsidePrivacyPolicy_num
+
+        print(total_lack_data_num, total_fuzzy_data_num, total_app_num)
+
         data = {
-            "appNum": 30,
-            "declareGroupNum": 618,
-            "declareUrlNum": 315,
-            "complianceGroupNum": 278,
-            "complianceGroupProportion": "45%",
-            "lackDataNum": 185,
-            "lackDataProportion": "30%",
-            "fuzzyDataNum": 155,
-            "fuzzyDataProportion": "25%",
-            "complianceUrlNum": 95,
-            "complianceUrlProportion": "30%",
-            "UnableToConnectNum": 15,
-            "UnableToConnectProportion": "5%",
-            "NotPrivacyPolicyNum": 110,
-            "NotPrivacyPolicyProportion": "35%",
-            "appPrivacyPolicyNum": 47,
-            "appPrivacyPolicyProportion": "15%",
-            "notDataInsidePrivacyPolicyNum": 48,
-            "notDataInsidePrivacyPolicyProportion": "15%"
+            "appNum": total_app_num,
+            "declareGroupNum": total_declare_group_num,
+            "declareUrlNum": total_declare_url_num,
+
+            "complianceGroupNum": total_compliance_group_num,
+            "complianceGroupProportion": f"{round(total_compliance_group_num / total_declare_group_num * 100, 2)}%",
+            "lackDataNum": total_lack_data_num,
+            "lackDataProportion": f"{round(total_lack_data_num / total_declare_group_num * 100, 2)}%",
+            "fuzzyDataNum": total_fuzzy_data_num,
+            "fuzzyDataProportion": f"{round(total_fuzzy_data_num / total_declare_group_num * 100, 2)}%",
+
+            "complianceUrlNum": total_compliance_url_num,
+            "complianceUrlProportion": f"{round(total_compliance_url_num / total_declare_url_num * 100, 2)}%",
+            "UnableToConnectNum": total_unableToConnect_num,
+            "UnableToConnectProportion": f"{round(total_unableToConnect_num / total_declare_url_num * 100, 2)}%",
+            "NotPrivacyPolicyNum": total_notPrivacyPolicy_num,
+            "NotPrivacyPolicyProportion": f"{round(total_notPrivacyPolicy_num / total_declare_url_num * 100, 2)}%",
+            "appPrivacyPolicyNum": total_appPrivacyPolicy_num,
+            "appPrivacyPolicyProportion": f"{round(total_appPrivacyPolicy_num / total_declare_url_num * 100, 2)}%",
+            "notDataInsidePrivacyPolicyNum": total_notDataInsidePrivacyPolicy_num,
+            "notDataInsidePrivacyPolicyProportion": f"{round(total_notDataInsidePrivacyPolicy_num / total_declare_url_num * 100, 2)}%",
         }
 
         # 创建一个内存中的IO对象

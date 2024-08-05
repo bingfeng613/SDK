@@ -12,6 +12,8 @@ class User(models.Model):
 class App(models.Model):
     id = models.AutoField(primary_key=True)
 
+    account = models.CharField(max_length=100)
+
     appName = models.CharField(max_length=100)
     totalDataNum = models.IntegerField()
     totalUrlNum = models.IntegerField()

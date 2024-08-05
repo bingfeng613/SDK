@@ -140,6 +140,13 @@ export default {
                     return;
                 }
             }
+            
+            if (item.name === 'test') {
+                this.$router.push({ 
+                    path: 'http://www.baidu.com', 
+                    query: { redirect: item.name } 
+                });
+            }
 
             if (this.$route.path !== item.path && !(this.$route.path === '/home' && item.path === '/')) {
                 this.$router.push(item.path);

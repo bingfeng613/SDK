@@ -74,6 +74,7 @@ export default {
 
 .chart-label {
     position: absolute;
+    margin-top:30px;
     font-size: 1.5em;
     color: #000;
     text-align: center;

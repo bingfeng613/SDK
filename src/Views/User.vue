@@ -15,7 +15,7 @@
         <div class="card-summary">
           <h3>共导入：</h3>
           <p>{{ statistics.appNum }} 篇APP隐私政策</p>
-          <p>共解析：</p>
+          <h3>共解析：</h3>
           <p>{{ statistics.declareGroupNum }} 个声明组</p>
           <p>{{ statistics.declareUrlNum }} 个声明链接</p>
         </div>
@@ -44,8 +44,10 @@
           <p>{{ statistics.complianceUrlNum }} 有效链接数</p>
           <p>of {{ statistics.declareUrlNum }} 总链接数</p>
           <div class="detail-item" v-for="(value, label) in linkDetails" :key="label">
-            <span class="detail-label">{{ label }}：</span>
-            <span class="detail-value">{{ value.count }} / {{ value.proportion }}</span>
+            <div class="label-container">
+              <span class="detail-label">{{ label }}：</span>
+              <span class="detail-value">{{ value.count }} / {{ value.proportion }}</span>
+            </div>
             <div class="bar-bg">
               <div class="bar" :style="{ width: value.proportion, backgroundColor: value.color }"></div>
             </div>
@@ -259,6 +261,7 @@ export default {
 .buttons {
   display: flex;
   justify-content: left;
+  margin-left: 150px
 }
 
 .buttons button {
@@ -295,15 +298,15 @@ export default {
   border: 1px solid #ccc;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
 }
 
 .chart-url {
   border: 1px solid #ccc;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 40%;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  width: 30%;
 }
 
 .details {
@@ -318,13 +321,23 @@ export default {
   margin: 10px 0;
 }
 
+
+
+.label-container {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+}
+
 .detail-label {
-  color: #666;
+  color: #333;
 }
 
 .detail-value {
-  color: #333;
+  color: #666;
   margin-left: 10px;
+  margin-left: auto; 
+  text-align: right; 
 }
 
 .bar-container {
