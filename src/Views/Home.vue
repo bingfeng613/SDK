@@ -22,11 +22,14 @@
 <script>
 import { MessageBox } from 'element-ui';
 import MainHeader from '@/components/MainHeader.vue';
+import cookie from 'js-cookie'
+
 export default {
   components: { MainHeader },
     data() {
         return {
             selectedFiles: [],
+            user_account: this.$store.state.user.account,
         };
     },
     methods: {
@@ -43,6 +46,8 @@ export default {
             }
 
             console.log('Files to upload:', this.selectedFiles); // 调试信息
+
+            formData.append('account', this.user_account); // 添加user_account参数
 
             fetch('http://127.0.0.1:8000/upload-app/', {
                 method: 'POST',
