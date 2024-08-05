@@ -147,7 +147,7 @@ class AppSearchView(generics.ListAPIView):
             keyword = self.request.query_params.get('keyword', None)
             if keyword:
                 queryset = all_set.filter(Q(appName__icontains=keyword))
-            return App.objects.filter(account=account)
+            return queryset
         else:
             return Response({'error': 'Account parameter is required.'}, status=400)
 

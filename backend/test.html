@@ -8,12 +8,12 @@
             // 防止 CSRF 令牌问题，实际部署时需要根据后端需求添加
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-            const ids = [5,6];
+            const ids = [7,10,11];
             const data = {
                 ids: ids
             };
 
-            fetch('http://127.0.0.1:8000/apps/download/', {
+            fetch('http://127.0.0.1:8000/statistics/excel/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
