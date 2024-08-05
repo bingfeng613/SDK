@@ -36,6 +36,7 @@ import { mapActions } from 'vuex';
 import axios from 'axios';
 import { MessageBox } from 'element-ui';
 import MainHeader from '@/components/MainHeader.vue';
+import cookie from 'js-cookie'
 
 export default {
   components: { MainHeader },
@@ -48,7 +49,8 @@ export default {
       pageSize: 5,
       total: 0,
       selectedItems: [],
-      tableData: []
+      tableData: [],
+      user_account: this.$store.state.user.account,
     };
   },
   methods: {
@@ -66,7 +68,8 @@ export default {
         const response = await axios.get('http://127.0.0.1:8000/apps/list', {
           params: {
             page_size: this.pageSize,
-            page: this.currentPage
+            page: this.currentPage,
+            account: this.user_account
           }
         });
         this.tableData = response.data.results;
@@ -85,7 +88,8 @@ export default {
           params: {
             keyword: this.search,
             page_size: this.pageSize,
-            page: this.currentPage
+            page: this.currentPage,
+            account : this.user_account
           }
         });
         this.tableData = response.data.results;

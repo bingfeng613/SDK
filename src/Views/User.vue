@@ -78,6 +78,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import axios from "axios";
 import MainHeader from '@/components/MainHeader.vue';
+import { List } from 'element-ui';
 
 export default {
   components: {
