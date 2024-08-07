@@ -69,6 +69,10 @@
     position: relative;
 }
 
+.el-menu {
+    min-height:120vh;
+}
+
 .user {
     display: flex;
     flex-direction: column;
