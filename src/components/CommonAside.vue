@@ -21,10 +21,10 @@
                 <i :class="`el-icon-${item.icon}`"></i>
                 <span slot="title">{{ item.label }}</span>
             </template>
-            <el-menu-item-group v-for="subItem in item.children" :key="subItem.name">
-                <el-menu-item @click="clickItem(subItem)" :index="subItem.name">{{ subItem.label }}</el-menu-item>
-            </el-menu-item-group>
-        </el-submenu> -->
+<el-menu-item-group v-for="subItem in item.children" :key="subItem.name">
+    <el-menu-item @click="clickItem(subItem)" :index="subItem.name">{{ subItem.label }}</el-menu-item>
+</el-menu-item-group>
+</el-submenu> -->
 
         <!-- Change Password Dialog -->
         <el-dialog title="修改密码" :visible.sync="changePasswordDialogVisible">
@@ -45,6 +45,20 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
+
+        <!-- 用户手册和联系我们 -->
+        <div class="bottom-menu-items">
+            <el-menu-item index="user-manual">
+                <i class="el-icon-document"></i>
+                <span slot="title"><a href="https://eej0iqm7kp.feishu.cn/docx/Oi8hd6MtJok0KYxsXUAcDMT2nPc"
+                        target="_blank" class="no-underline">用户手册</a></span>
+            </el-menu-item>
+            <el-menu-item index="contact-us">
+                <i class="el-icon-phone"></i>
+                <span slot="title"><a href="https://github.com/bingfeng613/SDK" target="_blank"
+                        class="no-underline">联系我们</a></span>
+            </el-menu-item>
+        </div>
     </el-menu>
 </template>
 
@@ -52,7 +66,7 @@
 .el-menu-vertical-demo {
     width: 200px;
     min-height: 100vh;
-    // border-right: 2px solid #ccc;
+    position: relative;
 }
 
 .user {
@@ -93,16 +107,26 @@
         }
 
         .spacer {
-            margin-left: 10px; 
-            margin-right: 10px; 
+            margin-left: 10px;
+            margin-right: 10px;
         }
     }
 }
 
 .el-menu {
-    border-right: 2px solid #ccc; 
+    border-right: 2px solid #ccc;
 }
 
+.bottom-menu-items {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.no-underline {
+    text-decoration: none;
+    color: inherit;
+}
 </style>
 
 <script>
@@ -140,11 +164,11 @@ export default {
                     return;
                 }
             }
-            
+
             if (item.name === 'test') {
-                this.$router.push({ 
-                    path: 'http://www.baidu.com', 
-                    query: { redirect: item.name } 
+                this.$router.push({
+                    path: 'http://www.baidu.com',
+                    query: { redirect: item.name }
                 });
             }
 
@@ -184,7 +208,7 @@ export default {
                             this.$message.error(response.data.message);
                         }
                     }).catch(error => {
-                        this.$message.error('密码修改失败，请重试',error);
+                        this.$message.error('密码修改失败，请重试', error);
                     });
                 }
             });
