@@ -235,13 +235,23 @@ export default {
       }
     },
     async exportReport() {
+
       try {
         // 获取内容元素
         const contentElement = this.$el.querySelector('.content');
 
+        // 保存当前的缩放比例
+        const originalZoom = document.body.style.zoom;
+
+        // 设置缩放比例为100%
+        document.body.style.zoom = '100%';
+
         // 使用 html2canvas 将内容转换为图片
         const contentCanvas = await html2canvas(contentElement);
         const contentImage = contentCanvas.toDataURL('image/jpeg');
+
+        // 恢复原有的缩放比例
+        document.body.style.zoom = originalZoom;
 
         // 创建 jsPDF 实例，设置为横向 A4 页面
         const pdf = new jsPDF('landscape', 'mm', 'a4');
@@ -280,6 +290,7 @@ export default {
       } catch (error) {
         console.error('Error exporting report:', error);
       }
+
     }
 
   },
