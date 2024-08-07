@@ -101,6 +101,7 @@
 
 .el-menu {
     border-right: 2px solid #ccc; 
+    min-height: 120vh;
 }
 
 </style>

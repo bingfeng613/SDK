@@ -313,11 +313,11 @@ export default {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  height: 70vh;
+  height: 90vh;
   margin: 0 20px;
-  /* border: 2px solid #ccc;
+  border: 2px solid #ccc;
   border-radius: 20px;
-  background-color: #f5f5f5; */
+  background-color: #f5f5f5;
 }
 
 .header {
@@ -327,15 +327,15 @@ export default {
 .buttons {
   display: flex;
   justify-content: left;
-  margin-left: 150px
+  margin-left: 250px
 }
 
 .buttons button {
   margin-top: 0;
-  margin-right: 20px;
+  margin-right: 80px;
   margin-bottom: 10px;
   margin-left: 20px;
-  padding: 10px 20px;
+  padding: 15px 40px;
   border: none;
   border-radius: 5px;
   background-color: #336FFF;
@@ -358,6 +358,7 @@ export default {
   margin-bottom:30px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
 }
 
 .chart-data {
@@ -365,6 +366,7 @@ export default {
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
 }
 
 .chart-url {
@@ -373,6 +375,7 @@ export default {
   border-radius: 10px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
   width: 30%;
+  background-color: #ffffff;
 }
 
 .details {
