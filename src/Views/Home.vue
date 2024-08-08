@@ -14,6 +14,10 @@
                     </li>
                 </ul>
                 <button class="confirm-button" @click="uploadFiles" :disabled="selectedFiles.length === 0">确定上传</button>
+                <div v-if="loading" class="loading-overlay">
+                    <div class="loading-spinner"></div>
+                    <p>上传解析中，请稍等...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -25,11 +29,12 @@ import MainHeader from '@/components/MainHeader.vue';
 import cookie from 'js-cookie'
 
 export default {
-    components: { MainHeader },
+    components: { MainHeader},
     data() {
         return {
             selectedFiles: [],
             user_account: this.$store.state.user.account,
+            loading: false,
         };
     },
     methods: {
@@ -46,6 +51,8 @@ export default {
             this.selectedFiles.splice(index, 1);
         },
         uploadFiles() {
+            this.loading = true; 
+
             const formData = new FormData();
             for (let i = 0; i < this.selectedFiles.length; i++) {
                 formData.append('file', this.selectedFiles[i]); // 修改参数名为 'file'
@@ -64,11 +71,18 @@ export default {
                     console.log('上传成功:', data);
                     this.$message.success('上传成功');
                     this.selectedFiles = []; // 清空已上传文件列表
-                    this.$router.push({ name: 'mall' });
+                    console.log('note',this.loading) 
+                    // this.loading = false;
+                    setTimeout(() => {
+                        this.loading = false; // 关闭加载动画
+                        this.$router.push({ name: 'mall' }); // 跳转到指定页面
+                    }, 10000);
+                    // this.$router.push({ name: 'mall' });
                 })
                 .catch(error => {
                     console.error('上传失败:', error);
                     this.$message.error('上传失败', error);
+                    // this.loading = false;
                 });
         },
     },
@@ -147,5 +161,33 @@ li {
 .confirm-button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 </style>

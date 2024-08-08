@@ -12,7 +12,7 @@
     "chart.js": "^4.4.3",
     "core-js": "^3.8.3",
     "echarts": "^5.1.2",
-    "element-ui": "^2.15.10",
+    "element-ui": "^2.15.14",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.1",

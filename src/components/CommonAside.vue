@@ -70,7 +70,7 @@
 }
 
 .el-menu {
-    min-height:120vh;
+    min-height:110vh;
 }
 
 .user {

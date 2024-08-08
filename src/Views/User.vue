@@ -324,7 +324,7 @@ export default {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  height: 90vh;
+  height: 80vh;
   margin: 0 20px;
   border: 2px solid #ccc;
   border-radius: 20px;
@@ -338,7 +338,7 @@ export default {
 .buttons {
   display: flex;
   justify-content: left;
-  margin-left: 250px
+  margin-left: 350px
 }
 
 .buttons button {

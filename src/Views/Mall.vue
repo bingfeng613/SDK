@@ -11,16 +11,16 @@
         <el-button type="primary" @click="exportData">导出数据</el-button>
         <el-button type="primary" @click="generateStats">生成统计</el-button>
       </div>
-      <el-table v-loading="loading" :data="tableData" style="width: 100%" @selection-change="handleSelectionChange"
+      <el-table v-loading="loading" :data="tableData" style="width: 100%; font-size:18px"  :row-style="{height:'85px'}" @selection-change="handleSelectionChange"
         ref="table">
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="appName" label="APP名称" align="center"></el-table-column>
         <el-table-column prop="lackDataNum" label="缺失声明数" align="center"></el-table-column>
-        <el-table-column prop="lackData" label="缺失声明项" align="center"></el-table-column>
-        <el-table-column prop="fuzzyDataNum" label="模糊声明项" align="center"></el-table-column>
-        <el-table-column prop="fuzzyData" label="模糊声明项数" align="center"></el-table-column>
+        <el-table-column prop="lackData" label="缺失声明项" align="center" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="fuzzyDataNum" label="模糊声明数" align="center" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="fuzzyData" label="模糊声明项" align="center"></el-table-column>
         <el-table-column prop="brokenLinkNum" label="无效链接数" align="center"></el-table-column>
-        <el-table-column prop="brokenLink" label="无效链接项" align="center"></el-table-column>
+        <el-table-column prop="brokenLink" label="无效链接项" align="center" show-overflow-tooltip></el-table-column>
       </el-table>
       <div class="pagination">
         <el-pagination @current-change="handlePageChange" :current-page="currentPage" :page-size="pageSize"
@@ -46,7 +46,7 @@ export default {
       search: '',
       loading: false,
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 7,
       total: 0,
       selectedItems: [],
       tableData: [],
@@ -263,4 +263,7 @@ export default {
   text-align: right;
   margin-top: 20px;
 }
+
+
+
 </style>
